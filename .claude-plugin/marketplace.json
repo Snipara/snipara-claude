@@ -1,0 +1,28 @@
+{
+  "name": "snipara-plugins",
+  "owner": {
+    "name": "Snipara Team",
+    "email": "hello@snipara.com"
+  },
+  "metadata": {
+    "description": "Official Snipara plugins for Claude Code - Context optimization, documentation querying, memory, and safe code execution",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "snipara",
+      "source": "./",
+      "description": "Context optimization + safe code execution - Query docs (90% token reduction) and execute code with Docker isolation using RLM Runtime",
+      "version": "1.0.0",
+      "author": {
+        "name": "Snipara Team"
+      },
+      "homepage": "https://snipara.com",
+      "repository": "https://github.com/alopez3006/snipara-claude",
+      "license": "MIT",
+      "keywords": ["documentation", "context", "mcp", "rag", "optimization", "rlm", "code-execution", "docker", "memory", "swarms"],
+      "category": "productivity",
+      "tags": ["context-optimization", "documentation", "mcp-server", "rlm-runtime", "memory", "team-collaboration"]
+    }
+  ]
+}

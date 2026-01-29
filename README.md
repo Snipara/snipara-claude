@@ -65,9 +65,22 @@ Snipara is a **context optimization layer** - it does NOT run an LLM. It works a
 
 ### Step 1: Install Plugin
 
+**Option A: From Marketplace (recommended)**
+
 ```bash
-# Install from git
-/plugin install https://github.com/alopez3006/snipara-claude
+# Add the Snipara marketplace
+/plugin marketplace add alopez3006/snipara-claude
+
+# Install the plugin
+/plugin install snipara@snipara-plugins
+```
+
+**Option B: Local development**
+
+```bash
+# Clone and load locally
+git clone https://github.com/alopez3006/snipara-claude.git
+claude --plugin-dir ./snipara-claude
 ```
 
 ### Step 2: Configure Snipara MCP
