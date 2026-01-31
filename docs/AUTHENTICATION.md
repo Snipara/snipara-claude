@@ -6,6 +6,7 @@ Complete reference for authenticating with Snipara and understanding how it work
 
 ## Table of Contents
 
+- [Quick Setup (Recommended)](#quick-setup-recommended)
 - [How Snipara Authentication Works](#how-snipara-authentication-works)
 - [Method 1: API Key](#method-1-api-key)
 - [Method 2: OAuth Device Flow](#method-2-oauth-device-flow)
@@ -14,6 +15,42 @@ Complete reference for authenticating with Snipara and understanding how it work
 - [Setup By Client](#setup-by-client)
 - [Token Management](#token-management)
 - [Troubleshooting](#troubleshooting)
+
+---
+
+## Quick Setup (Recommended)
+
+The fastest way to get started with Snipara in Claude Code:
+
+### /snipara:quickstart
+
+One command that handles everything: sign-in, account creation, and `.mcp.json` configuration.
+
+```
+/snipara:quickstart
+```
+
+**What happens:**
+1. Checks if `.mcp.json` already has Snipara configured
+2. If not, starts the device flow with auto-provisioning
+3. Opens your browser to sign in with GitHub or Google
+4. Auto-creates a free account and "My Project" if needed
+5. Writes `.mcp.json` with your API key and project endpoint
+
+### /snipara:login
+
+If you already have `.mcp.json` but need to re-authenticate or switch accounts:
+
+```
+/snipara:login
+```
+
+This runs the device flow with `auto_provision: true`, meaning:
+- New users get a free account + project created automatically
+- Existing users get their current project selected
+- The `.mcp.json` is written/updated with the returned API key
+
+Both commands use the enhanced device flow that returns an API key directly, so you don't need to manually copy keys from the dashboard.
 
 ---
 
@@ -97,7 +134,7 @@ Add to your project's `.mcp.json`:
 
 ## Method 2: OAuth Device Flow
 
-Browser-based login for users who prefer not to manage API keys. Convenient if your Snipara account is linked to GitHub or Google.
+Browser-based login for users who prefer not to manage API keys. The `/snipara:login` and `/snipara:quickstart` commands use this flow with `auto_provision: true` to auto-create accounts and projects.
 
 ### How It Works
 
@@ -133,8 +170,10 @@ Browser-based login for users who prefer not to manage API keys. Convenient if y
 ```bash
 curl -X POST https://snipara.com/api/oauth/device/code \
   -H "Content-Type: application/json" \
-  -d '{"client_id": "snipara_cli"}'
+  -d '{"client_id": "claude-code", "auto_provision": true}'
 ```
+
+> **Note:** `auto_provision: true` tells the server to auto-create an account and project if the user doesn't have one. Omit it for the standard flow where the user selects a project manually.
 
 Response:
 
@@ -177,25 +216,49 @@ Poll responses:
 | `{"error": "access_denied"}` | User denied authorization | Show error, stop polling |
 | `{"access_token": "..."}` | Success | Save tokens, stop polling |
 
-Success response:
+Success response (with `auto_provision: true`):
 
 ```json
 {
   "access_token": "snipara_at_abc123...",
   "token_type": "Bearer",
   "expires_in": 2592000,
-  "refresh_token": "snipara_rt_def456..."
+  "refresh_token": "snipara_rt_def456...",
+  "project_id": "proj_abc",
+  "project_slug": "my-project",
+  "project_name": "My Project",
+  "api_key": "rlm_pk_abc123...",
+  "server_url": "https://api.snipara.com",
+  "mcp_endpoint": "https://api.snipara.com/mcp/my-project"
 }
 ```
 
-**4. Use the token in `.mcp.json`:**
+> When `auto_provision` was used, the response includes `api_key`, `project_slug`, `mcp_endpoint`, and `server_url` for direct `.mcp.json` configuration.
+
+**4. Use the API key in `.mcp.json`:**
 
 ```json
 {
   "mcpServers": {
     "snipara": {
       "type": "http",
-      "url": "https://api.snipara.com/mcp/<your-project-slug>",
+      "url": "https://api.snipara.com/mcp/my-project",
+      "headers": {
+        "X-API-Key": "rlm_pk_abc123..."
+      }
+    }
+  }
+}
+```
+
+Or use the OAuth token instead:
+
+```json
+{
+  "mcpServers": {
+    "snipara": {
+      "type": "http",
+      "url": "https://api.snipara.com/mcp/my-project",
       "headers": {
         "Authorization": "Bearer snipara_at_abc123..."
       }

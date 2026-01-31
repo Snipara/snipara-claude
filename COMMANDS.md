@@ -4,6 +4,10 @@ All commands are prefixed with `/snipara:` namespace.
 
 ## Available Commands
 
+### Setup Commands
+- `/snipara:quickstart` - One-command setup (sign in + auto-create account + configure)
+- `/snipara:login` - Sign in via browser (auto-creates free account if needed)
+
 ### Workflow Commands
 - `/snipara:lite-mode [task]` - Quick bug fixes and small features
 - `/snipara:full-mode [task]` - Complex features with full 6-phase workflow
@@ -34,6 +38,8 @@ All commands are prefixed with `/snipara:` namespace.
 
 | Command | Filename |
 |---------|----------|
+| `/snipara:quickstart` | `commands/quickstart.md` |
+| `/snipara:login` | `commands/login.md` |
 | `/snipara:lite-mode` | `commands/lite-mode.md` |
 | `/snipara:full-mode` | `commands/full-mode.md` |
 | `/snipara:remember` | `commands/remember.md` |
@@ -89,4 +95,4 @@ After loading the plugin with `claude --plugin-dir .`, verify commands are avail
 /help
 ```
 
-Look for the "snipara:" section showing all 14 commands.
+Look for the "snipara:" section showing all 16 commands.
