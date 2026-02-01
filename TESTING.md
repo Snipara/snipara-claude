@@ -273,7 +273,7 @@ Use this template to document your test results:
 Once testing is complete, others can install with:
 
 ```bash
-/plugin install https://github.com/alopez3006/snipara-claude
+/plugin install https://github.com/Snipara/snipara-claude
 ```
 
 Or for local testing:

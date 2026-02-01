@@ -1470,7 +1470,7 @@ rlm = RLM(max_depth=4)
 - 📚 [RLM Runtime Documentation](https://rlm-runtime.readthedocs.io)
 - 📚 [Snipara Documentation](https://snipara.com/docs)
 - 💬 [Discord Community](https://discord.gg/snipara)
-- 🐛 [Report Issues](https://github.com/alopez3006/snipara-claude/issues)
+- 🐛 [Report Issues](https://github.com/Snipara/snipara-claude/issues)
 
 ### Contribute
 

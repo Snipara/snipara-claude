@@ -87,7 +87,7 @@ Snipara is a **context optimization layer** - it does NOT run an LLM. It works a
 
 ```bash
 # Add the Snipara marketplace
-/plugin marketplace add alopez3006/snipara-claude
+/plugin marketplace add Snipara/snipara-claude
 
 # Install the plugin
 /plugin install snipara@snipara-plugins
@@ -97,7 +97,7 @@ Snipara is a **context optimization layer** - it does NOT run an LLM. It works a
 
 ```bash
 # Clone and load locally
-git clone https://github.com/alopez3006/snipara-claude.git
+git clone https://github.com/Snipara/snipara-claude.git
 claude --plugin-dir ./snipara-claude
 ```
 
@@ -412,7 +412,7 @@ Snipara OAuth authenticates you to the **Snipara context optimization service**.
 
 - 📚 [Documentation](https://snipara.com/docs)
 - 💬 [Discord Community](https://discord.gg/snipara)
-- 🐛 [Report Issues](https://github.com/alopez3006/snipara-claude/issues)
+- 🐛 [Report Issues](https://github.com/Snipara/snipara-claude/issues)
 
 ## License
 
@@ -428,7 +428,7 @@ To test the plugin locally:
 
 ```bash
 # Clone the repository
-git clone https://github.com/alopez3006/snipara-claude.git
+git clone https://github.com/Snipara/snipara-claude.git
 cd snipara-claude
 
 # Test plugin locally
