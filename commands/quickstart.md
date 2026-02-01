@@ -23,7 +23,7 @@ If a `snipara` server is already configured in `.mcp.json`:
 If NOT configured, run the full login flow:
 
 ```bash
-curl -s -X POST https://snipara.com/api/oauth/device/code \
+curl -s -X POST https://www.snipara.com/api/oauth/device/code \
   -H "Content-Type: application/json" \
   -d '{"client_id": "claude-code", "auto_provision": true}'
 ```
@@ -40,7 +40,7 @@ Tell the user:
 Poll for the token every `{interval}` seconds:
 
 ```bash
-curl -s -X POST https://snipara.com/api/oauth/device/token \
+curl -s -X POST https://www.snipara.com/api/oauth/device/token \
   -H "Content-Type: application/json" \
   -d '{
     "grant_type": "urn:ietf:params:oauth:grant-type:device_code",

@@ -19,7 +19,7 @@ Sign in to Snipara through your browser. This will automatically create a free a
 Run the following bash command to start the device flow:
 
 ```bash
-curl -s -X POST https://snipara.com/api/oauth/device/code \
+curl -s -X POST https://www.snipara.com/api/oauth/device/code \
   -H "Content-Type: application/json" \
   -d '{"client_id": "claude-code", "auto_provision": true}'
 ```
@@ -38,7 +38,7 @@ Then tell the user:
 Poll for the token every `{interval}` seconds (default 5):
 
 ```bash
-curl -s -X POST https://snipara.com/api/oauth/device/token \
+curl -s -X POST https://www.snipara.com/api/oauth/device/token \
   -H "Content-Type: application/json" \
   -d '{
     "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
