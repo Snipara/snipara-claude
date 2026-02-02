@@ -28,6 +28,12 @@ All commands are prefixed with `/snipara:` namespace.
 - `/snipara:inject [context]` - Set session context
 - `/snipara:shared` - Get team coding standards
 
+### Orchestration & Document Commands *(NEW in v1.1)*
+- `/snipara:load-document [path]` - Load raw document content by file path (PRO+)
+- `/snipara:load-project [paths]` - Load structured project map with token budgeting (TEAM+)
+- `/snipara:orchestrate [query]` - Multi-round scan, search, and load in one call (TEAM+)
+- `/snipara:repl-context [query]` - Package project context for REPL with Python helpers (PRO+)
+
 ### RLM Runtime Commands (Optional)
 - `/snipara:run [task]` - Execute with RLM Runtime (local)
 - `/snipara:docker [task]` - Execute with Docker isolation
@@ -54,6 +60,10 @@ All commands are prefixed with `/snipara:` namespace.
 | `/snipara:docker` | `commands/docker.md` |
 | `/snipara:visualize` | `commands/visualize.md` |
 | `/snipara:logs` | `commands/logs.md` |
+| `/snipara:load-document` | `commands/load-document.md` |
+| `/snipara:load-project` | `commands/load-project.md` |
+| `/snipara:orchestrate` | `commands/orchestrate.md` |
+| `/snipara:repl-context` | `commands/repl-context.md` |
 
 ## Usage Examples
 
@@ -87,6 +97,21 @@ All commands are prefixed with `/snipara:` namespace.
 /snipara:shared
 ```
 
+### Orchestrate multi-round context exploration
+```
+/snipara:orchestrate How does the authentication flow work end-to-end?
+```
+
+### Load a specific document
+```
+/snipara:load-document docs/api.md
+```
+
+### Build REPL context for code execution
+```
+/snipara:repl-context authentication flow
+```
+
 ## Testing Commands
 
 After loading the plugin with `claude --plugin-dir .`, verify commands are available:
@@ -95,4 +120,4 @@ After loading the plugin with `claude --plugin-dir .`, verify commands are avail
 /help
 ```
 
-Look for the "snipara:" section showing all 16 commands.
+Look for the "snipara:" section showing all 20 commands.

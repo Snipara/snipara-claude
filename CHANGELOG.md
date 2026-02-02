@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-02-02
+
+### Added
+- 4 new MCP tools matching Snipara SDK Phase 12 (orchestration) and Phase 13 (REPL context bridge):
+  - `rlm_load_document` (PRO+) - Load raw document content by file path
+  - `rlm_load_project` (TEAM+) - Load structured map of all project documents with token budgeting
+  - `rlm_orchestrate` (TEAM+) - Multi-round context exploration (scan → search → raw load) in one call
+  - `rlm_repl_context` (PRO+) - Package project context for REPL consumption with Python helpers
+- 4 new user-invoked commands:
+  - `/snipara:load-document` - Load raw document content
+  - `/snipara:load-project` - Load project structure
+  - `/snipara:orchestrate` - Multi-round orchestration
+  - `/snipara:repl-context` - Build REPL context package
+- 1 new model-invoked skill:
+  - `orchestrate` - Auto-selects multi-round context exploration for complex queries
+
+### Changed
+- Plugin version bumped to 1.1.0
+- Total commands: 16 → 20
+- Total skills: 5 → 6
+- Updated README with new tools reference table, architecture diagram, and examples
+- Updated COMMANDS.md with new command mappings and usage examples
+
+### Notes
+- Synced with Snipara SDK commit ebf8b60 (Feb 1, 2026)
+- Synced with Snipara VS Code extension v1.4.0
+
 ## [1.0.0] - 2026-01-29
 
 ### Added
@@ -36,7 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned for v1.1
+### Planned for v1.2
 - Additional skills for testing, debugging, refactoring
 - Integration with Snipara dashboard for usage stats
 - Interactive config command `/snipara:config`

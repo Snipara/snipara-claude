@@ -54,6 +54,9 @@ Snipara is a **context optimization layer** - it does NOT run an LLM. It works a
 
 ### Snipara Features
 - 🔍 **Smart Documentation Querying** - Semantic search with token budgeting
+- 🎯 **Multi-Round Orchestration** - Scan, search, and load in one call *(NEW in v1.1)*
+- 📄 **Document & Project Loading** - Load raw files or full project maps *(NEW in v1.1)*
+- 🐍 **REPL Context Bridge** - Package context for Python REPL consumption *(NEW in v1.1)*
 - 🧠 **Memory & Recall** - Remember decisions and context across sessions
 - 📋 **Workflow Modes** - LITE (quick) and FULL (comprehensive) development modes
 - 👥 **Team Collaboration** - Multi-project search and shared coding standards
@@ -178,6 +181,7 @@ The plugin includes model-invoked skills that Claude uses automatically:
 - **query-docs** - Auto-queries Snipara when you ask about documentation
 - **recall-context** - Auto-recalls previous decisions and context
 - **plan-task** - Auto-generates execution plans for complex tasks
+- **orchestrate** - Multi-round context exploration for complex queries *(NEW in v1.1)*
 - **execute-code** - Auto-executes code with RLM Runtime when safe execution needed
 - **chunk-implement** - Chunk-by-chunk implementation workflow
 
@@ -202,6 +206,12 @@ The plugin includes model-invoked skills that Claude uses automatically:
 #### Team
 - `/snipara:shared` - Get team coding standards
 - `/snipara:inject [context]` - Set session context
+
+#### Orchestration & Documents *(NEW in v1.1)*
+- `/snipara:load-document [path]` - Load raw document content by file path (PRO+)
+- `/snipara:load-project [paths]` - Load structured project map with token budgeting (TEAM+)
+- `/snipara:orchestrate [query]` - Multi-round scan, search, and load in one call (TEAM+)
+- `/snipara:repl-context [query]` - Package project context for REPL with Python helpers (PRO+)
 
 #### RLM Runtime (Optional)
 - `/snipara:run [task]` - Execute with RLM (local)
@@ -397,6 +407,19 @@ Snipara OAuth authenticates you to the **Snipara context optimization service**.
 
 **RLM Runtime users:** If you use the optional RLM Runtime for isolated code execution, you need a separate LLM API key (`ANTHROPIC_API_KEY` or `OPENAI_API_KEY`) in addition to Snipara auth.
 
+## New MCP Tools (v1.1)
+
+The following tools were added in v1.1, matching the Snipara SDK Phase 12 (orchestration) and Phase 13 (REPL context bridge):
+
+| Tool | Plan | Description |
+|------|------|-------------|
+| `rlm_load_document` | PRO+ | Load raw document content by file path |
+| `rlm_load_project` | TEAM+ | Load structured map of all project documents with token budgeting |
+| `rlm_orchestrate` | TEAM+ | Multi-round context exploration (scan → search → raw load) in one call |
+| `rlm_repl_context` | PRO+ | Package project context for REPL consumption with Python helpers |
+
+These tools are exposed as both commands (`/snipara:load-document`, `/snipara:load-project`, `/snipara:orchestrate`, `/snipara:repl-context`) and as a model-invoked skill (`orchestrate`) that Claude uses automatically for complex queries.
+
 ## Pricing
 
 | Plan | Price | Queries/month | Features |
@@ -447,11 +470,13 @@ claude --plugin-dir .
 │                                                             │
 │  Skills (Model-Invoked):                                    │
 │  - query-docs → rlm_context_query (Snipara MCP)            │
+│  - orchestrate → rlm_orchestrate (multi-round)      [v1.1] │
 │  - execute-code → rlm run --env docker (RLM Runtime)       │
 │  - chunk-implement → Snipara + RLM integration             │
 │                                                             │
 │  Commands (User-Invoked):                                   │
 │  - /snipara:lite, /snipara:full (workflows)                │
+│  - /snipara:orchestrate, /snipara:load-* (context)  [v1.1] │
 │  - /snipara:run, /snipara:docker (RLM execution)           │
 │  - /snipara:remember, /snipara:recall (memory)             │
 │                                                             │
@@ -462,8 +487,11 @@ claude --plugin-dir .
 │  (api.snipara.com)   │          │  (Local/Docker)      │
 │                      │          │                      │
 │  - Context query     │          │  - Code execution    │
-│  - Memory system     │          │  - Trajectory logs   │
-│  - Team features     │          │  - Visualization     │
-│  - Swarms            │          │  - Multi-provider    │
+│  - Orchestration     │          │  - Trajectory logs   │
+│  - Document loading  │          │  - Visualization     │
+│  - REPL context      │          │  - Multi-provider    │
+│  - Memory system     │          │                      │
+│  - Team features     │          │                      │
+│  - Swarms            │          │                      │
 └──────────────────────┘          └──────────────────────┘
 ```
