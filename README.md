@@ -407,7 +407,24 @@ Snipara OAuth authenticates you to the **Snipara context optimization service**.
 
 **RLM Runtime users:** If you use the optional RLM Runtime for isolated code execution, you need a separate LLM API key (`ANTHROPIC_API_KEY` or `OPENAI_API_KEY`) in addition to Snipara auth.
 
-## New MCP Tools (v1.1)
+## New MCP Tools (v1.2 - Sprint 3: Index Health & Analytics)
+
+The following tools were added in v1.2 for monitoring index health and search performance:
+
+| Tool | Plan | Description |
+|------|------|-------------|
+| `rlm_index_health` | ALL | Get comprehensive index health metrics (coverage, quality, tier distribution, stale docs) |
+| `rlm_index_recommendations` | ALL | Get actionable recommendations to improve index health |
+| `rlm_search_analytics` | ALL | Get search performance metrics (queries, success rate, latency percentiles, tool usage) |
+| `rlm_query_trends` | ALL | Get query trends over time with configurable granularity (day/week) |
+
+These tools provide visibility into:
+- **Health Score** - Composite 0-100 score based on coverage, quality, and freshness
+- **Tier Distribution** - HOT/WARM/COLD/ARCHIVE chunk categorization
+- **Latency Percentiles** - p50, p75, p90, p95, p99 response time metrics
+- **Error Analysis** - Categorized error breakdown with examples
+
+### Previous: New MCP Tools (v1.1)
 
 The following tools were added in v1.1, matching the Snipara SDK Phase 12 (orchestration) and Phase 13 (REPL context bridge):
 
