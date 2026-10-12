@@ -11,9 +11,22 @@ subscription is purchased separately on snipara.com. No payment tool is provided
 Create a reviewer-only workspace/project containing `atlas-rollout-note.md`.
 Seed the proposed decision and explicitly review it before the memory-recall case.
 Grant only the project permissions needed by the cases. Use no customer documents.
-The server currently supports GitHub/Google OAuth and email magic-link sign-in;
-no public username/password provider is implemented. Reviewer login must be tested
-without access to the publisher's mailbox, phone, social account or private network.
+The production providers endpoint was checked on 2026-10-12: GitHub OAuth,
+Auth0 OIDC and email magic-link sign-in are enabled. The public login page offers
+GitHub, team SSO and email; Google is not an enabled provider. There is no direct
+public Snipara username/password form.
+
+Existing team SSO routes through Auth0 Organizations at `/sso/<team-slug>`.
+An isolated Auth0 demo organization with a dedicated test identity is a candidate
+reviewer-access path, not a verified login: its connection, permissions and full
+OAuth return must still be tested.
+
+The current [OpenAI submission requirements](https://developers.openai.com/plugins/deploy/submission)
+require the test account to work immediately without MFA approval, email/SMS
+codes, magic links or private-network access. A shared GitHub login alone does
+not prove this requirement is met. Reviewers must not depend on access to the
+publisher's mailbox, phone or social account. Preserve existing users' security
+settings; do not introduce a reviewer-only authentication bypass.
 Reviewer credentials and private instructions belong in the secure portal fields,
 never this repository or a ZIP. No reviewer account has been provisioned by this release.
 
