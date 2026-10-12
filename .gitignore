@@ -74,3 +74,8 @@ $RECYCLE.BIN/
 
 # Node modules (if any)
 node_modules/
+
+# The native plugin ships these JavaScript adapters; Python's lib/ ignore above
+# must not remove them from the marketplace package.
+!plugins/snipara/lib/
+!plugins/snipara/lib/*.mjs
