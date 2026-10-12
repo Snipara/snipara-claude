@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "publisher": "Starbox Group Gmbh",
+  "license": "MIT",
+  "licenseScope": "Plugin files only; brand assets, backend and hosted service excluded",
+  "repositoryURL": "https://github.com/Snipara/snipara-claude",
+  "review": {
+    "commerce": false,
+    "commerce_description": "The plugin is free and requires a Snipara account. Any subscription is purchased separately on snipara.com; the plugin does not take payments or place orders."
+  },
+  "publication": {
+    "countries": [],
+    "release_notes": "Account OAuth with explicit project selection and sourced project context and memory. The native Claude Code/Codex package also includes independently configurable Companion and Orchestrator modules."
+  },
+  "interface": {
+    "displayName": "Snipara",
+    "shortDescription": "Project context and memory",
+    "longDescription": "Connect your authorized Snipara project to retrieve focused source context and reviewed project memory. Sign in through the assistant's native OAuth flow and explicitly choose one accessible project. Ask questions about your documentation, inspect the cited source sections, and recall reviewed prior decisions. A Snipara account and project access are required. The plugin is free; any Snipara subscription is purchased separately on snipara.com. This directory package provides Hosted MCP and context/memory skills. Local Companion and Orchestrator capabilities are available in the native Claude Code/Codex package from the same source, with all three modules enabled by default and independent off switches. Local runtimes require separate installation and project configuration.",
+    "category": "Developer Tools",
+    "capabilities": ["Retrieve project context", "Read source sections", "Recall reviewed memory"],
+    "websiteURL": "https://www.snipara.com",
+    "supportURL": "https://www.snipara.com/contact",
+    "privacyPolicyURL": "https://www.snipara.com/privacy",
+    "termsOfServiceURL": "https://www.snipara.com/terms",
+    "logo": "./assets/icon.png",
+    "composerIcon": "./assets/icon.png",
+    "defaultPrompt": [
+      "Find the documentation relevant to my question and cite the sources.",
+      "Recall the reviewed decisions about this project.",
+      "Check the source sections behind this answer."
+    ]
+  }
+}

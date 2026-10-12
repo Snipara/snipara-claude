@@ -1,0 +1,6 @@
+{
+  "type": "decision",
+  "text": "Atlas checkpoint review by the designated human owner must precede launch.",
+  "reviewStatus": "PENDING",
+  "note": "Proposed synthetic fixture. Review it explicitly in the dedicated reviewer project before P4."
+}

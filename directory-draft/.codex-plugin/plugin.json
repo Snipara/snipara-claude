@@ -1,0 +1,48 @@
+{
+  "name": "snipara",
+  "version": "2.0.0",
+  "description": "Sourced project context and reviewed memory through Snipara Hosted MCP.",
+  "author": {
+    "name": "Starbox Group Gmbh",
+    "url": "https://snipara.com"
+  },
+  "homepage": "https://snipara.com",
+  "repository": "https://github.com/Snipara/snipara-claude",
+  "keywords": [
+    "context",
+    "memory",
+    "documentation",
+    "sources"
+  ],
+  "license": "MIT",
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Snipara",
+    "shortDescription": "Project context and memory",
+    "longDescription": "Connect your authorized Snipara project to retrieve focused source context and reviewed project memory. Sign in through the assistant's native OAuth flow and explicitly choose one accessible project. Ask questions about your documentation, inspect the cited source sections, and recall reviewed prior decisions. A Snipara account and project access are required. The plugin is free; any Snipara subscription is purchased separately on snipara.com. This directory package provides Hosted MCP and context/memory skills. Local Companion and Orchestrator capabilities are available in the native Claude Code/Codex package from the same source, with all three modules enabled by default and independent off switches. Local runtimes require separate installation and project configuration.",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Retrieve project context",
+      "Read source sections",
+      "Recall reviewed memory"
+    ],
+    "websiteURL": "https://www.snipara.com",
+    "supportURL": "https://www.snipara.com/contact",
+    "privacyPolicyURL": "https://www.snipara.com/privacy",
+    "termsOfServiceURL": "https://www.snipara.com/terms",
+    "logo": "./assets/icon.png",
+    "composerIcon": "./assets/icon.png",
+    "defaultPrompt": [
+      "Find the documentation relevant to my question and cite the sources.",
+      "Recall the reviewed decisions about this project.",
+      "Check the source sections behind this answer."
+    ],
+    "developerName": "Starbox Group Gmbh"
+  },
+  "extensions": {
+    "com.openai": {
+      "onboardingSkill": "./skills/connect/SKILL.md"
+    }
+  }
+}

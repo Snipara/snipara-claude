@@ -1,3 +1,12 @@
+# 2.0.0 — 2026-10-12
+
+- Shared native plugin for Claude Code and Codex, with Snipara, Companion and Orchestrator enabled by default and independent off switches.
+- Account OAuth asks users to choose an accessible project; plugin MCP is named snipara-plugin to coexist with global connections.
+- Companion 3.7.0 and Orchestrator 1.9.0 are pinned, separately installed local engines. Enabling the plugin does not start workers or controllers.
+- Existing Claude marketplace name snipara-plugins is preserved; its source now points to plugins/snipara. See MIGRATION.md.
+- Hook-free directory draft, synthetic review fixtures and review instructions are included. Official directory submissions and approvals are pending.
+- Native sourced-answer checks, local checkpoint/observe-mode checks, 23 package tests and isolated client installation checks are recorded. Refresh, reviewer access and recording remain pending.
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

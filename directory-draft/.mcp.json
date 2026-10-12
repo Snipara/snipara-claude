@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "snipara-plugin": {
+      "type": "http",
+      "url": "https://api.snipara.com/mcp"
+    }
+  }
+}

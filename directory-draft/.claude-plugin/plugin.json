@@ -1,0 +1,18 @@
+{
+  "name": "snipara",
+  "version": "2.0.0",
+  "description": "Sourced project context and reviewed memory through Snipara Hosted MCP.",
+  "author": {
+    "name": "Starbox Group Gmbh",
+    "url": "https://snipara.com"
+  },
+  "homepage": "https://snipara.com",
+  "repository": "https://github.com/Snipara/snipara-claude",
+  "keywords": [
+    "context",
+    "memory",
+    "documentation",
+    "sources"
+  ],
+  "license": "MIT"
+}

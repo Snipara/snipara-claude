@@ -1,0 +1,48 @@
+{
+  "positive": [
+    {
+      "description": "P1: Fresh native OAuth connection to a dedicated synthetic review project. In account mode explicitly select the review project. Observe consent, return to the client and real stats; never count an existing global API-key connection as proof.",
+      "prompt": "Connect Snipara and check whether my project is accessible.",
+      "tools_triggered": "snipara_stats, snipara_help",
+      "expected_behavior": "After native OAuth, use the plugin MCP named snipara-plugin. Read its actual token-bound project_id using snipara_stats, then discover supported tools. Report only the observed connection and selected review project. Authentication failure is reported honestly."
+    },
+    {
+      "description": "P2: Upload a synthetic Atlas rollout note to the reviewer project beforehand. It states that launch follows a reviewed checkpoint. Ask a natural documentation question and inspect retrieved evidence.",
+      "prompt": "What needs to happen before the Atlas launch? Give me the supporting source.",
+      "tools_triggered": "snipara_context_query, snipara_get_chunk",
+      "expected_behavior": "Retrieve the Atlas source and load its cited section. Explain the checkpoint requirement with a source citation; preserve caveats and avoid an invented launch date."
+    },
+    {
+      "description": "P3: Same authorized review project, asking for an exact source section from the preceding result. Use the returned chunk ID, never a fabricated ID.",
+      "prompt": "Show the source section behind that checkpoint requirement.",
+      "tools_triggered": "snipara_get_chunk",
+      "expected_behavior": "Load the exact cited chunk from the preceding result and distinguish source text from inference. Do not invent a source when the chunk is unavailable."
+    },
+    {
+      "description": "P4: A reviewed synthetic decision in the reviewer project says Atlas review precedes launch. Fixture provisioning must occur before review; this test does not write memory.",
+      "prompt": "What did we decide about reviewing Atlas before launch?",
+      "tools_triggered": "snipara_recall",
+      "expected_behavior": "Recall the pre-existing reviewed decision. Explain its authority and any returned caveats; never present pending or stale memory as confirmed source truth."
+    },
+    {
+      "description": "P5: The synthetic project intentionally contains no Atlas pricing decision. This is a supported retrieval with absent evidence, distinct from a negative no-tool case.",
+      "prompt": "What price did we approve for Atlas? Cite the approval.",
+      "tools_triggered": "snipara_context_query",
+      "expected_behavior": "Search the authorized project and clearly state that the returned sources do not establish an approved price. No fabricated amount or approval."
+    }
+  ],
+  "negative": [
+    {
+      "description": "N1: Outside the plugin's project-context purpose. Answer directly, with no Snipara calls.",
+      "prompt": "Translate 'Good morning' into French."
+    },
+    {
+      "description": "N2: The directory variant has no local execution tools. Explain the missing capability, without installing a runtime, invoking a worker or claiming a deployment.",
+      "prompt": "Use this plugin to run a local Orchestrator worker and deploy my repository."
+    },
+    {
+      "description": "N3: Credentials must not enter project memory. Refuse the requested persistence and advise removing the secret from chat. Do not invoke a memory-writing tool.",
+      "prompt": "Store my production API token in Snipara so every future assistant can reuse it."
+    }
+  ]
+}

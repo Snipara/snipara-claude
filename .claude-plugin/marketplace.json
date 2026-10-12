@@ -1,28 +1,18 @@
 {
   "name": "snipara-plugins",
   "owner": {
-    "name": "Snipara Team",
+    "name": "Starbox Group Gmbh",
     "email": "hello@snipara.com"
   },
   "metadata": {
-    "description": "Official Snipara plugins for Claude Code - Context optimization, documentation querying, memory, and safe code execution",
-    "version": "1.1.0"
+    "description": "Snipara project context, Companion workflows and optional Orchestrator execution."
   },
   "plugins": [
     {
       "name": "snipara",
-      "source": "./",
-      "description": "Context optimization + safe code execution - Query docs (90% token reduction), orchestrate multi-round exploration, and execute code with Docker isolation using RLM Runtime",
-      "version": "1.1.0",
-      "author": {
-        "name": "Snipara Team"
-      },
-      "homepage": "https://snipara.com",
-      "repository": "https://github.com/Snipara/snipara-claude",
-      "license": "MIT",
-      "keywords": ["documentation", "context", "mcp", "rag", "optimization", "orchestration", "repl", "rlm", "code-execution", "docker", "memory", "swarms"],
-      "category": "productivity",
-      "tags": ["context-optimization", "documentation", "orchestration", "mcp-server", "rlm-runtime", "memory", "team-collaboration"]
+      "source": "./plugins/snipara",
+      "description": "Project context, local workflow continuity and explicit orchestration in one configurable plugin.",
+      "version": "2.0.0-profile.1419b7c3c095"
     }
   ]
 }
