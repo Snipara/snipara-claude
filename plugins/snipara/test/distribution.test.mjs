@@ -43,6 +43,10 @@ test("customer distribution uses account MCP with no review project preset", (t)
   assert.equal(result.directory.project, null);
   assert.equal(result.directory.scope, "account-project-selection-draft");
   assert.equal(result.directory.readyToSubmit, false);
+  assert.deepEqual(
+    read(join(root, "mcp.json")).mcpServers["snipara-plugin"].extensions["com.openai"].auth,
+    { type: "oauth", client: { mode: "dcr" } }
+  );
   const manifest = read(join(root, "plugin.json"));
   assert.equal(manifest.repository, "https://github.com/Snipara/snipara-claude");
   assert.deepEqual(manifest.extensions["com.openai"].publication.countries, []);
