@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
-import { readFileSync, realpathSync } from "node:fs";
+import { readFileSync, realpathSync, existsSync } from "node:fs";
 import { resolve, sep } from "node:path";
 
 const root = realpathSync("plugins/snipara");
 const read = path => JSON.parse(readFileSync(resolve(root, path), "utf8"));
 const manifest = read(".claude-plugin/plugin.json");
+assert.ok(!existsSync(resolve(root, "test")), "test fixtures must stay outside the installed plugin");
 assert.equal(manifest.name, "snipara");
 assert.ok(manifest.version && manifest.description);
 for (const field of ["privacyPolicyUrl", "supportUrl", "termsOfServiceUrl", "documentationUrl"]) {

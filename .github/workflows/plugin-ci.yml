@@ -27,6 +27,6 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Test packaging and module boundaries
-        run: node --test plugins/snipara/test/*.test.mjs
+        run: node --test plugins/snipara-tests/*.test.mjs
       - name: Validate published Claude manifest and icon
         run: node .github/scripts/check-plugin.mjs

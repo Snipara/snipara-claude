@@ -207,7 +207,7 @@ documentation; NOTICE excludes the Snipara brand assets, backend and hosted
 service. See DISTRIBUTION.md for submission and native acceptance gaps.
 
 ```bash
-node --test plugins/snipara/test/*.test.mjs
+node --test plugins/snipara-tests/*.test.mjs
 ```
 
 See `VERIFICATION.md` for measured checks and remaining client proof. Version
