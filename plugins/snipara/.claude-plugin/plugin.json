@@ -15,5 +15,10 @@
     "workflow",
     "orchestration"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "icon": "./assets/icon.png",
+  "privacyPolicyUrl": "https://www.snipara.com/privacy",
+  "supportUrl": "https://www.snipara.com/contact",
+  "termsOfServiceUrl": "https://www.snipara.com/terms",
+  "documentationUrl": "https://github.com/Snipara/snipara-claude#readme"
 }
