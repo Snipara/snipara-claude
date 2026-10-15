@@ -227,6 +227,15 @@ export function exportDistribution(sourceRoot, destination, project) {
     if (listing.publisher) market.owner.name = listing.publisher;
     json(marketPath, market);
     legal(nativeRoot, listing);
+    // Authoring tests belong beside the installable plugin, never inside it.
+    // Keep them available to repository CI without installing test fixtures.
+    const tests = join(source, "..", "snipara-tests");
+    if (existsSync(tests)) {
+      const destination = join(stage, "native-marketplace", "plugins", "snipara-tests");
+      mkdirSync(destination);
+      for (const name of ["plugin.test.mjs", "distribution.test.mjs"])
+        cpSync(join(tests, name), join(destination, name));
+    }
     const markerPath = join(stage, "native-marketplace", ".snipara-native-plugin.json");
     const marker = JSON.parse(readFileSync(markerPath, "utf8"));
     marker.files = inventory(join(stage, "native-marketplace"))

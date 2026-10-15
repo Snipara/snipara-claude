@@ -21,9 +21,9 @@ import {
   assertDirectoryPackage,
   validateListing,
   inventory,
-} from "../lib/distribution.mjs";
-import { invocation } from "../lib/runtime.mjs";
-const source = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+} from "../snipara/lib/distribution.mjs";
+import { invocation } from "../snipara/lib/runtime.mjs";
+const source = resolve(dirname(fileURLToPath(import.meta.url)), "../snipara");
 const read = (path) => JSON.parse(readFileSync(path, "utf8"));
 function fixture(t) {
   const root = mkdtempSync(join(tmpdir(), "snipara-distribution-test-"));
@@ -61,6 +61,10 @@ test("native bootstrap has account MCP, all modules and no inherited project exe
   assert.equal(result.output, realpathSync(output));
   assert.equal(result.native.readyToPublish, false);
   const root = join(output, "native-marketplace/plugins/snipara");
+  assert.equal(existsSync(join(root, "test")), false);
+  assert.equal(existsSync(join(root, "package.json")), false);
+  for (const name of ["plugin.test.mjs", "distribution.test.mjs"])
+    assert.ok(existsSync(join(output, "native-marketplace/plugins/snipara-tests", name)));
   const config = read(join(root, "config.json"));
   assert.equal(config.project, null);
   assert.deepEqual(config.modules, { snipara: true, companion: true, orchestrator: true });

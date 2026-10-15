@@ -15,11 +15,11 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { applyOptions, MODULES, readConfig, validateConfig, VERSIONS } from "../lib/config.mjs";
-import { buildPlugin } from "../lib/build.mjs";
-import { installRuntime, invocation, runtimeEnvironment } from "../lib/runtime.mjs";
+import { applyOptions, MODULES, readConfig, validateConfig, VERSIONS } from "../snipara/lib/config.mjs";
+import { buildPlugin } from "../snipara/lib/build.mjs";
+import { installRuntime, invocation, runtimeEnvironment } from "../snipara/lib/runtime.mjs";
 
-const source = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const source = resolve(dirname(fileURLToPath(import.meta.url)), "../snipara");
 const defaults = readConfig(source);
 const read = (path) => JSON.parse(readFileSync(path, "utf8"));
 const fixture = (t) => {
