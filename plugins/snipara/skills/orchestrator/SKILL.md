@@ -36,3 +36,9 @@ help and version only.
 Keep htask coordination here, not on Companion. Report unavailable capabilities
 or missing proof without weakening an existing gate. Never fabricate credentials,
 approval, acceptance, runtime continuation or billing measurements.
+
+The launcher excludes environment credentials by default. For a hosted command
+that needs a Snipara key, explain sharing with Orchestrator and obtain explicit
+user authorization before placing `--with-snipara-credentials` immediately after
+`orchestrator`. Permission to orchestrate alone does not authorize credential
+sharing. Never ask for or print keys or forward unrelated provider credentials.

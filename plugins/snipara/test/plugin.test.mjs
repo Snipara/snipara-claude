@@ -8,6 +8,7 @@ import {
   symlinkSync,
   writeFileSync,
   existsSync,
+  chmodSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
@@ -16,7 +17,7 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { applyOptions, MODULES, readConfig, validateConfig, VERSIONS } from "../lib/config.mjs";
 import { buildPlugin } from "../lib/build.mjs";
-import { installRuntime, invocation } from "../lib/runtime.mjs";
+import { installRuntime, invocation, runtimeEnvironment } from "../lib/runtime.mjs";
 
 const source = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const defaults = readConfig(source);
@@ -99,6 +100,18 @@ for (let mask = 0; mask < 8; mask++) {
     );
     assert.equal(session.status, 0, session.stderr);
     assert.equal(session.stdout.trim().length > 0, mask !== 0);
+    const hooks = read(join(root, "hooks/hooks.json")).hooks;
+    if (mask !== 0) {
+      const command = hooks.SessionStart[0].hooks[0].command;
+      assert.equal(command, 'sh "${CLAUDE_PLUGIN_ROOT}/scripts/session-start.sh"');
+      const hook = spawnSync("sh", ["-c", command], {
+        encoding: "utf8",
+        env: { PATH: process.env.PATH, CLAUDE_PLUGIN_ROOT: root },
+      });
+      assert.equal(hook.status, 0, hook.stderr);
+      assert.match(hook.stdout, /configured project and module switches/);
+      assert.ok(hook.stdout.includes(JSON.stringify(config, null, 2)));
+    } else assert.deepEqual(hooks, {});
     for (const name of ["companion", "orchestrator"]) {
       let probed = false;
       const probe = () => {
@@ -259,4 +272,81 @@ test("CLI rejects unknown and repeated flags without creating output", (t) => {
     assert.equal(result.status, 1);
     assert.equal(existsSync(output), false);
   }
+});
+
+test("runtime and installers exclude unrelated secrets and loader flags", () => {
+  const env = {
+    PATH: "/usr/bin", HOME: "/test-home", TMPDIR: "/tmp",
+    SNIPARA_API_KEY: "test-snipara", RLM_API_KEY: "test-legacy",
+    OPENAI_API_KEY: "test-provider", NPM_TOKEN: "test-npm",
+    AWS_SECRET_ACCESS_KEY: "test-cloud", NODE_OPTIONS: "--inspect",
+    PYTHONPATH: "/injected", LD_PRELOAD: "/injected.so",
+    SNIPARA_PROJECT: "inherited-wrong-project",
+  };
+  assert.deepEqual(runtimeEnvironment(env), {
+    PATH: "/usr/bin", HOME: "/test-home", TMPDIR: "/tmp",
+  });
+  const config = { ...defaults, project: "explicit-project" };
+  let probeEnv;
+  const call = invocation(config, "companion", ["--help"], {
+    env,
+    probe: (_command, _args, options) => {
+      probeEnv = options.env;
+      return { status: 0, stdout: VERSIONS.companion };
+    },
+  });
+  assert.deepEqual(probeEnv, call.options.env);
+  assert.equal(call.options.env.SNIPARA_PROJECT, "explicit-project");
+  assert.equal(call.options.env.SNIPARA_API_KEY, undefined);
+  for (const key of ["OPENAI_API_KEY", "NPM_TOKEN", "NODE_OPTIONS", "PYTHONPATH", "LD_PRELOAD"])
+    assert.equal(call.options.env[key], undefined);
+  const optedIn = runtimeEnvironment(env, true);
+  assert.equal(optedIn.SNIPARA_API_KEY, "test-snipara");
+  assert.equal(optedIn.RLM_API_KEY, "test-legacy");
+  assert.equal(optedIn.OPENAI_API_KEY, undefined);
+});
+
+test("CLI requires per-invocation opt-in before sharing Snipara keys", (t) => {
+  const directory = fixture(t);
+  const stub = join(directory, "snipara-companion");
+  writeFileSync(stub, `#!/usr/bin/env node
+if (process.argv[2] === '--version') console.log('3.7.0');
+else console.log(JSON.stringify({ snipara: process.env.SNIPARA_API_KEY,
+  legacy: process.env.RLM_API_KEY, unrelated: process.env.OPENAI_API_KEY,
+  loader: process.env.NODE_OPTIONS, args: process.argv.slice(2) }));
+`);
+  chmodSync(stub, 0o755);
+  for (const consent of [false, true]) {
+    const args = [join(source, "scripts/snipara.mjs"), "companion",
+      ...(consent ? ["--with-snipara-credentials"] : []), "--help"];
+    const result = spawnSync(process.execPath, args, {
+      encoding: "utf8", cwd: directory,
+      env: { PATH: directory + ":" + dirname(process.execPath),
+        SNIPARA_API_KEY: "test-snipara", RLM_API_KEY: "test-legacy",
+        OPENAI_API_KEY: "test-provider", NODE_OPTIONS: "--no-warnings" },
+    });
+    assert.equal(result.status, 0, result.stderr);
+    const observed = JSON.parse(result.stdout);
+    assert.equal(observed.snipara, consent ? "test-snipara" : undefined);
+    assert.equal(observed.legacy, consent ? "test-legacy" : undefined);
+    assert.equal(observed.unrelated, undefined);
+    assert.equal(observed.loader, undefined);
+    assert.deepEqual(observed.args, ["--help"]);
+  }
+});
+
+test("pinned package installation does not inherit account or registry secrets", (t) => {
+  let calls = 0;
+  installRuntime(defaults, "companion", {
+    cwd: fixture(t), env: { PATH: "/usr/bin", NPM_TOKEN: "test-registry",
+      SNIPARA_API_KEY: "test-snipara", PLUGIN_DATA: join(fixture(t), "runtime") },
+    execute: (_command, args, options) => {
+      calls++;
+      assert.ok(args.includes("snipara-companion@" + VERSIONS.companion));
+      assert.equal(options.env.NPM_TOKEN, undefined);
+      assert.equal(options.env.SNIPARA_API_KEY, undefined);
+      return { status: 0 };
+    },
+  });
+  assert.equal(calls, 1);
 });

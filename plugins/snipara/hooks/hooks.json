@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/snipara.mjs\" session-start",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/scripts/session-start.sh\"",
             "timeout": 5
           }
         ]

@@ -3,6 +3,26 @@ import { join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 import { requireModule, VERSIONS } from "./config.mjs";
 
+// Do not hand unrelated provider keys, package tokens or loader-injection flags
+// to an optional runtime or package installer. Native MCP OAuth stays in the host.
+export function runtimeEnvironment(env, shareSniparaCredentials = false) {
+  const safe = {};
+  for (const key of [
+    "PATH", "HOME", "USER", "LOGNAME", "LANG", "LC_ALL", "TERM",
+    "TMPDIR", "TMP", "TEMP", "SystemRoot", "WINDIR", "USERPROFILE",
+    "APPDATA", "LOCALAPPDATA", "PATHEXT", "ComSpec",
+    "PLUGIN_DATA", "CLAUDE_PLUGIN_DATA",
+  ]) {
+    if (typeof env[key] === "string") safe[key] = env[key];
+  }
+  if (shareSniparaCredentials) {
+    for (const key of ["SNIPARA_API_KEY", "RLM_API_KEY"]) {
+      if (typeof env[key] === "string") safe[key] = env[key];
+    }
+  }
+  return safe;
+}
+
 export function runtimeDirectory(env = process.env, cwd = process.cwd()) {
   return resolve(
     env.PLUGIN_DATA || env.CLAUDE_PLUGIN_DATA || join(cwd, ".snipara", "plugin-runtime")
@@ -13,7 +33,8 @@ export function invocation(
   config,
   name,
   args,
-  { env = process.env, cwd = process.cwd(), probe = spawnSync } = {}
+  { env = process.env, cwd = process.cwd(), probe = spawnSync,
+    shareSniparaCredentials = false } = {}
 ) {
   requireModule(config, name); // Must run before probing binaries or spawning any process.
   if (
@@ -38,7 +59,10 @@ export function invocation(
           : "Snipara is off; this profile permits local status/help only. Enable Snipara for hosted or execution workflows."
       );
   }
-  const runtimeEnv = { ...env, SNIPARA_COMPANION_SKIP_NPM_VERSION_CHECK: "1" };
+  const runtimeEnv = {
+    ...runtimeEnvironment(env, shareSniparaCredentials),
+    SNIPARA_COMPANION_SKIP_NPM_VERSION_CHECK: "1",
+  };
   if (config.project) {
     runtimeEnv.SNIPARA_PROJECT = config.project;
     runtimeEnv.SNIPARA_PROJECT_SLUG = config.project;
@@ -92,7 +116,9 @@ export function installRuntime(
   const target = join(data, name);
   mkdirSync(target, { recursive: true });
   const run = (command, args) => {
-    const result = execute(command, args, { cwd, env, stdio: "inherit", shell: false });
+    const result = execute(command, args, {
+      cwd, env: runtimeEnvironment(env), stdio: "inherit", shell: false,
+    });
     if (result.error || result.status !== 0) throw new Error(`${name} installation failed.`);
   };
   if (name === "companion") {

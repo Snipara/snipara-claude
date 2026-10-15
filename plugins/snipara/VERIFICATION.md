@@ -1,5 +1,28 @@
 # Local plugin verification — 2026-10-11
 
+## Claude Directory and public-repository CI — 2026-10-16
+
+Claude submission must select `plugins/snipara`, not the repository root: root
+selection scans the legacy integration and produced a blocking unpinned launcher.
+The selected bundle passed Directory validation at `d555c5d`, with five schema
+warnings and ten policy holds requiring human review. Public PR #1 added icon,
+privacy, support, terms and documentation fields; the portal confirms all six
+listing links. Policy holds remain for asset references, inherited runtime
+environment and the Node launcher; validation success is not policy approval.
+
+Public PR #2 adds `.github/workflows/plugin-ci.yml` and a published-manifest
+checker. Node 20 and 22 jobs passed on both the dev push and PR. Promoted through
+dev to main as `1be383e73ca194e7d50a1561d46dbc5229164318`; the main push run is
+https://github.com/Snipara/snipara-claude/actions/runs/38814410382.
+Actions use commit pins and read-only permissions, without secrets or installs.
+
+The portal remains at compliance, not submitted. Owner confirmed personal-data
+read/storage, retention potentially beyond 30 days and no under-18 targeting.
+Legal/policy attestations are unchecked. The wording forbidding execution outside
+declared MCP servers needs clarification for the full bundle's local hook and
+runtimes before attesting. Existing local generator metadata corrections remain
+uncommitted; unrelated working-tree changes were preserved.
+
 ## Account connection 0.3.0 — local verification
 
 - 35 focused web OAuth/resource/refresh/consent tests, 57 backend account OAuth,

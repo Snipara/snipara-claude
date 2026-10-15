@@ -1,8 +1,7 @@
 {
   "name": "snipara-plugins",
   "owner": {
-    "name": "Starbox Group Gmbh",
-    "email": "hello@snipara.com"
+    "name": "Starbox Group Gmbh"
   },
   "metadata": {
     "description": "Snipara project context, Companion workflows and optional Orchestrator execution."
@@ -12,7 +11,7 @@
       "name": "snipara",
       "source": "./plugins/snipara",
       "description": "Project context, local workflow continuity and explicit orchestration in one configurable plugin.",
-      "version": "2.0.0-profile.30db7f1e3500"
+      "version": "2.0.1-profile.31b5b1146e7d"
     }
   ]
 }

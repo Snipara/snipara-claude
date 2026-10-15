@@ -16,6 +16,8 @@ const usage = `Snipara plugin: one bundle for Claude Code and Codex
   install companion|orchestrator
   companion <CLI arguments...>
   orchestrator <CLI arguments...>
+  companion|orchestrator --with-snipara-credentials <CLI arguments...>
+The optional credential flag shares only Snipara API keys with that local runtime.
 All three modules default to on. Build/configure never install dependencies or execute tasks.
 After configure, refresh the local plugin installation and restart its client.`;
 
@@ -81,7 +83,9 @@ try {
     if (args.length !== 1) throw new Error("Install takes exactly one module name.");
     installRuntime(readConfig(root), args[0]);
   } else if (["companion", "orchestrator"].includes(action)) {
-    const call = invocation(readConfig(root), action, args);
+    const shareSniparaCredentials = args[0] === "--with-snipara-credentials";
+    const call = invocation(readConfig(root), action,
+      shareSniparaCredentials ? args.slice(1) : args, { shareSniparaCredentials });
     const result = spawnSync(call.command, call.args, call.options);
     if (result.error) throw new Error(`Unable to start ${action}.`);
     process.exitCode = result.status ?? 1;
