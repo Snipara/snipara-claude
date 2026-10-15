@@ -38,6 +38,13 @@ version permits `workflow status --json`, help and version only; do not invoke
 hosted queries, workflow publication or memory writes.
 Respect failures and distinguish local state from a confirmed hosted receipt.
 
+The launcher excludes environment credentials by default. If hosted CLI work
+needs an environment-backed Snipara key, explain that it will be shared only
+with Companion and obtain the user's explicit authorization for that sharing.
+Then place `--with-snipara-credentials` immediately after `companion` for that
+invocation. Do not add the flag just because a task or module is enabled. Never
+ask for or print key values; do not forward unrelated provider credentials.
+
 Checkpoint continuity requires the project folder, `.snipara` state and referenced
 files/artifacts. It does not migrate a live agent process. Use Orchestrator for
 explicit htask queues, controller execution and production proof coordination.

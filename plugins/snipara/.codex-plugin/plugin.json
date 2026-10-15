@@ -1,11 +1,12 @@
 {
   "name": "snipara",
-  "version": "2.0.0-profile.30db7f1e3500",
+  "version": "2.0.1-profile.31b5b1146e7d",
   "description": "Project context, local workflow continuity and explicit orchestration in one configurable plugin.",
   "author": {
     "name": "Starbox Group Gmbh",
     "url": "https://snipara.com"
   },
+  "icon": "./assets/icon.png",
   "homepage": "https://snipara.com",
   "repository": "https://github.com/Snipara/snipara-claude",
   "keywords": [

@@ -291,7 +291,10 @@ export function exportDistribution(sourceRoot, destination, project) {
     const identity = Object.fromEntries(
       Object.entries(base).filter(([key]) => !["$schema", "extensions"].includes(key))
     );
-    json(join(directory, ".claude-plugin", "plugin.json"), identity);
+    json(join(directory, ".claude-plugin", "plugin.json"), {
+      ...identity,
+      privacyPolicyUrl: interfaceFields.privacyPolicyURL,
+    });
     json(join(directory, ".codex-plugin", "plugin.json"), {
       ...identity,
       skills: "./skills/",

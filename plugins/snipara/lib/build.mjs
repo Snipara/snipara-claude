@@ -158,7 +158,13 @@ export function buildPlugin(
     const identity = Object.fromEntries(
       Object.entries(manifest).filter(([key]) => !["$schema", "extensions"].includes(key))
     );
-    json(join(root, ".claude-plugin", "plugin.json"), identity);
+    json(join(root, ".claude-plugin", "plugin.json"), {
+      ...identity,
+      privacyPolicyUrl: "https://www.snipara.com/privacy",
+      supportUrl: "https://www.snipara.com/contact",
+      termsOfServiceUrl: "https://www.snipara.com/terms",
+      documentationUrl: "https://github.com/Snipara/snipara-claude#readme",
+    });
     json(join(root, ".codex-plugin", "plugin.json"), {
       ...identity,
       skills: "./skills/",
@@ -185,7 +191,7 @@ export function buildPlugin(
                 hooks: [
                   {
                     type: "command",
-                    command: 'node "${CLAUDE_PLUGIN_ROOT}/scripts/snipara.mjs" session-start',
+                    command: 'sh "${CLAUDE_PLUGIN_ROOT}/scripts/session-start.sh"',
                     timeout: 5,
                   },
                 ],

@@ -1,0 +1,14 @@
+{
+  "name": "@snipara/native-plugin",
+  "version": "2.0.1",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/snipara.mjs build",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

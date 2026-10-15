@@ -130,10 +130,55 @@ uses a Python virtual environment (Python 3.10+ required). No global dependency
 is changed. An existing exact-version runtime on PATH can also be used.
 This initial runtime adapter targets macOS/Linux.
 
-Native MCP OAuth credentials remain with the client. They are not automatically
-shared with Companion/Orchestrator. Hosted CLI actions still need the existing
-environment-backed Snipara credentials/configuration. Never paste credentials
-into a plugin manifest or commit generated secret files.
+Native MCP OAuth credentials remain with the client. They are never copied by
+the plugin. Runtime and installer subprocesses receive a restricted environment,
+not the parent's complete environment. Provider API keys, registry tokens and
+runtime loader overrides are not forwarded. Existing runtime authentication
+stored separately by the user remains under that runtime's own control.
+
+For hosted CLI work that needs an environment-backed Snipara key, the user must
+explicitly authorize sharing it with the selected runtime for that invocation:
+
+```bash
+node scripts/snipara.mjs companion --with-snipara-credentials <CLI arguments...>
+node scripts/snipara.mjs orchestrator --with-snipara-credentials <CLI arguments...>
+```
+
+This opt-in forwards only `SNIPARA_API_KEY` and `RLM_API_KEY` when present. It
+does not persist or print their values and never applies to package installers.
+Without the flag, hosted CLI work may require the runtime's own authentication
+setup. Never paste credentials into chat or a plugin manifest, or commit them.
+
+## Data handling and Directory review
+
+The native Hosted MCP connection sends the user's authorized queries, source
+requests and explicit memory operations to `api.snipara.com` using host-managed
+OAuth. Source documents and project memories may contain personal information;
+stored memories and workflow evidence can persist beyond 30 days according to
+the service policy and user configuration. The local session hook only displays
+the public project identifier and module switches from `config.json`; it does
+not read conversations, OAuth tokens or environment credentials, contact a
+server, install packages, or start Companion/Orchestrator.
+
+Optional runtime installation contacts the npm registry or Python package index
+to download the pinned packages. Those services receive ordinary package-request
+and connection metadata, not workspace documents through the installer. User-
+requested runtime actions may read or write workspace files, save local workflow
+state, use separately configured runtime credentials, and contact Snipara or
+explicitly authorized execution providers. Enabling a module is not permission
+to run work or share credentials. Local modules can be disabled independently.
+
+`assets/icon.png` is a listing asset, not executable code. Build/export tools
+copy it and set manifest paths; tests inspect it as data. No command passes its
+bytes to an interpreter. Directory warnings about these references need human
+review; replacing a valid PNG or obscuring its path would not improve security.
+The listing-only fields `icon`, `privacyPolicyUrl`, `supportUrl`,
+`termsOfServiceUrl` and `documentationUrl` are intentionally retained even when
+Claude Code's runtime schema warns that it ignores them.
+
+[Privacy](https://www.snipara.com/privacy) ·
+[Support](https://www.snipara.com/contact) ·
+[Terms](https://www.snipara.com/terms)
 
 ## Verification and distribution
 
