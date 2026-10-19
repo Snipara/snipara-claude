@@ -23,6 +23,7 @@ import {
   inventory,
 } from "../snipara/lib/distribution.mjs";
 import { invocation } from "../snipara/lib/runtime.mjs";
+import { VERSIONS } from "../snipara/lib/config.mjs";
 const source = resolve(dirname(fileURLToPath(import.meta.url)), "../snipara");
 const read = (path) => JSON.parse(readFileSync(path, "utf8"));
 function fixture(t) {
@@ -89,7 +90,7 @@ test("native bootstrap has account MCP, all modules and no inherited project exe
         env: { SNIPARA_PROJECT: "developer-project" },
         probe: () => {
           probed = true;
-          return { status: 0, stdout: "3.7.0" };
+          return { status: 0, stdout: VERSIONS.companion };
         },
       }),
     /Choose your project/

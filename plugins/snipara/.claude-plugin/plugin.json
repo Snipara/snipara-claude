@@ -1,6 +1,6 @@
 {
   "name": "snipara",
-  "version": "2.0.2-profile.ae6fd6349734",
+  "version": "2.0.2-profile.43be5263622f",
   "description": "Project context, local workflow continuity and explicit orchestration in one configurable plugin.",
   "author": {
     "name": "Starbox Group Gmbh",
@@ -16,9 +16,9 @@
     "workflow",
     "orchestration"
   ],
+  "license": "MIT",
   "privacyPolicyUrl": "https://www.snipara.com/privacy",
   "supportUrl": "https://www.snipara.com/contact",
   "termsOfServiceUrl": "https://www.snipara.com/terms",
-  "documentationUrl": "https://github.com/Snipara/snipara-claude#readme",
-  "license": "MIT"
+  "documentationUrl": "https://github.com/Snipara/snipara-claude#readme"
 }

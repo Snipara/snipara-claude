@@ -1,6 +1,6 @@
 {
   "name": "snipara",
-  "version": "2.0.2-profile.ae6fd6349734",
+  "version": "2.0.2-profile.43be5263622f",
   "description": "Project context, local workflow continuity and explicit orchestration in one configurable plugin.",
   "author": {
     "name": "Starbox Group Gmbh",
@@ -16,6 +16,7 @@
     "workflow",
     "orchestration"
   ],
+  "license": "MIT",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "hooks": "./hooks/hooks.json",
@@ -29,6 +30,5 @@
     "com.openai": {
       "onboardingSkill": "./skills/settings/SKILL.md"
     }
-  },
-  "license": "MIT"
+  }
 }

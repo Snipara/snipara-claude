@@ -205,7 +205,7 @@ test("runtime keeps arguments literal and rejects stale or missing dependencies"
   const config = applyOptions(defaults, { project: "my-project" });
   const args = ["workflow", "start", "--goal", "$(touch sentinel); literal goal"];
   const call = invocation(config, "companion", args, {
-    probe: () => ({ status: 0, stdout: "3.7.0" }),
+    probe: () => ({ status: 0, stdout: VERSIONS.companion }),
   });
   assert.deepEqual(call.args.slice(-args.length), args);
   assert.equal(call.options.shell, false);
@@ -230,7 +230,7 @@ test("Snipara off rejects hosted work before even probing dependencies", () => {
   let calls = 0;
   const probe = () => {
     calls++;
-    return { status: 0, stdout: "3.7.0" };
+    return { status: 0, stdout: VERSIONS.companion };
   };
   for (const args of [
     ["query", "private context"],
@@ -310,7 +310,7 @@ test("CLI requires per-invocation opt-in before sharing Snipara keys", (t) => {
   const directory = fixture(t);
   const stub = join(directory, "snipara-companion");
   writeFileSync(stub, `#!/usr/bin/env node
-if (process.argv[2] === '--version') console.log('3.7.0');
+if (process.argv[2] === '--version') console.log(${JSON.stringify(VERSIONS.companion)});
 else console.log(JSON.stringify({ snipara: process.env.SNIPARA_API_KEY,
   legacy: process.env.RLM_API_KEY, unrelated: process.env.OPENAI_API_KEY,
   loader: process.env.NODE_OPTIONS, args: process.argv.slice(2) }));
