@@ -123,7 +123,7 @@ node scripts/snipara.mjs companion --version
 node scripts/snipara.mjs orchestrator status --json
 ```
 
-The installer pins Companion **3.9.0** and Orchestrator **1.12.1**.
+The installer pins Companion **3.9.0** and Orchestrator **1.13.0**.
 It uses plugin data when supplied by the host, otherwise the workspace's
 `.snipara/plugin-runtime/`. Companion uses a private npm prefix; Orchestrator
 uses a Python virtual environment (Python 3.10+ required). No global dependency
@@ -221,3 +221,18 @@ Formats follow [OpenAI's plugin packaging documentation](https://developers.open
 and [Claude Code's plugin reference](https://code.claude.com/docs/en/plugins-reference).
 
 Repository validation requires standalone Sandbox 2.3.0 or newer. Until these candidate versions are published, test them from local artifacts; do not claim registry availability. Missing/incompatible Sandbox always requires an explicit scoped user choice.
+
+## Native Sandbox approvals (plugin 2.2.0)
+
+The pinned Orchestrator 1.13.0 SDK supports an optional trusted-host callback
+for attended Codex questions and MCP confirmations. The standard plugin CLI
+launcher remains headless; a pin update does not attach a human UI or grant
+permissions. Without that channel or under `never`, protected calls are refused.
+Each answer must come from a real human for the exact pending call; no persistent
+consent is forwarded. See the installed Orchestrator `docs/NATIVE_HUMAN_INPUT.md`.
+
+Sandbox 2.4.1 is a separate installation and MCP registration. Configure its
+smallest approved validation workspace before startup. Its deterministic Docker
+tests need no LLM API key or Snipara account. Companion 3.9.0 records workflow
+continuity; an exact saved snapshot is distinct from a successful hosted refresh.
+Check all three installed versions and start a fresh native session after updating.

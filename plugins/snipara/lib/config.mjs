@@ -4,7 +4,7 @@ import { join } from "node:path";
 export const MODULES = ["snipara", "companion", "orchestrator"];
 // Native hosts merge plugin servers with existing user MCP registrations.
 export const MCP_SERVER_NAME = "snipara-plugin";
-export const VERSIONS = { companion: "3.9.0", orchestrator: "1.12.1" };
+export const VERSIONS = { companion: "3.9.0", orchestrator: "1.13.0" };
 
 function object(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
