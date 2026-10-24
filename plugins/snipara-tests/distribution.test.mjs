@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+  cpSync,
   mkdtempSync,
   readFileSync,
   readdirSync,
@@ -21,9 +22,11 @@ import {
   assertDirectoryPackage,
   validateListing,
   inventory,
+  assertDesktopPackage,
 } from "../snipara/lib/distribution.mjs";
 import { invocation } from "../snipara/lib/runtime.mjs";
-import { VERSIONS } from "../snipara/lib/config.mjs";
+import { buildPlugin } from "../snipara/lib/build.mjs";
+import { applyOptions, readConfig } from "../snipara/lib/config.mjs";
 const source = resolve(dirname(fileURLToPath(import.meta.url)), "../snipara");
 const read = (path) => JSON.parse(readFileSync(path, "utf8"));
 function fixture(t) {
@@ -31,6 +34,106 @@ function fixture(t) {
   t.after(() => rmSync(root, { recursive: true, force: true }));
   return root;
 }
+
+test("desktop candidate retains all modules and declares local execution without hooks", (t) => {
+  const output = join(fixture(t), "desktop");
+  const result = exportDistribution(source, output, undefined, { desktopOnly: true });
+  const root = join(output, "native-marketplace/plugins/snipara");
+  assertDesktopPackage(root);
+  assert.equal(result.native.target, "codex-desktop");
+  assert.equal(result.native.lifecycleHooks, false);
+  assert.equal(result.native.readyToPublish, false);
+  assert.equal(existsSync(join(root, "scripts/session-start.sh")), false);
+  assert.equal(existsSync(join(root, "hooks")), false);
+  const portable = read(join(root, "plugin.json")).extensions["com.openai"];
+  const codex = read(join(root, ".codex-plugin/plugin.json"));
+  assert.equal(portable.requires_local_executor, true);
+  assert.equal(codex.requires_local_executor, true);
+  assert.ok(portable.interface.shortDescription.length <= 30);
+  assert.deepEqual(codex.interface, portable.interface);
+  assert.deepEqual(codex.extensions["com.openai"].review, portable.review);
+  assert.match(portable.review.test_cases.negative[1].description, /Gmail/);
+  assert.deepEqual(read(join(root, "review-cases.json")), portable.review.test_cases);
+  assert.equal(read(join(root, "config.json")).project, null);
+  assert.deepEqual(read(join(root, "mcp.json")).mcpServers["snipara-plugin"], {
+    type: "streamable-http",
+    url: "https://api.snipara.com/mcp",
+  });
+  const archive = result.archives.find((entry) => entry.variant === "native");
+  assert.match(archive.file, /snipara-codex-desktop-/);
+  assert.equal(
+    createHash("sha256")
+      .update(readFileSync(join(output, archive.file)))
+      .digest("hex"),
+    archive.sha256
+  );
+});
+
+test("desktop settings preserve hook-free targeting and explicit module switches", (t) => {
+  const parent = fixture(t);
+  exportDistribution(source, join(parent, "desktop"), undefined, { desktopOnly: true });
+  const root = join(parent, "desktop/native-marketplace/plugins/snipara");
+  const config = applyOptions(readConfig(root), { project: "customer-project", companion: "off" });
+  const target = join(parent, "configured");
+  const result = buildPlugin(root, target, config);
+  assert.equal(existsSync(join(result.plugin, "hooks")), false);
+  assert.equal(existsSync(join(result.plugin, "skills/companion")), false);
+  assert.equal(existsSync(join(result.plugin, "skills/orchestrator")), true);
+  const m = read(join(result.plugin, "plugin.json")).extensions["com.openai"];
+  assert.equal(m.requires_local_executor, true);
+  assert.equal(
+    m.interface.longDescription,
+    read(join(root, "plugin.json")).extensions["com.openai"].interface.longDescription
+  );
+  assert.ok(m.review.test_cases.positive.length === 5);
+  assert.deepEqual(
+    read(join(result.plugin, ".codex-plugin/plugin.json")).extensions["com.openai"].review,
+    m.review
+  );
+  assert.deepEqual(read(join(result.plugin, "mcp.json")).mcpServers["snipara-plugin"], {
+    type: "streamable-http",
+    url: "https://api.snipara.com/mcp",
+  });
+  assert.equal(
+    read(join(result.plugin, ".mcp.json")).mcpServers["snipara-plugin"].url,
+    "https://api.snipara.com/mcp"
+  );
+  buildPlugin(result.plugin, target, applyOptions(config, { orchestrator: "off" }), true);
+  assert.equal(existsSync(join(result.plugin, "hooks")), false);
+  assert.equal(existsSync(join(result.plugin, "skills/orchestrator")), false);
+});
+
+test("desktop gate rejects server fields that prevent native MCP loading", (t) => {
+  const output = join(fixture(t), "desktop");
+  exportDistribution(source, output, undefined, { desktopOnly: true });
+  const root = join(output, "native-marketplace/plugins/snipara");
+  for (const name of ["mcp.json", ".mcp.json"]) {
+    const path = join(root, name);
+    const original = readFileSync(path, "utf8");
+    const mcp = JSON.parse(original);
+    mcp.mcpServers["snipara-plugin"].extensions = {
+      "com.openai": { auth: { type: "oauth", client: { mode: "dcr" } } },
+    };
+    writeFileSync(path, JSON.stringify(mcp));
+    assert.throws(() => assertDesktopPackage(root), /native-compatible OAuth discovery/);
+    writeFileSync(path, original);
+  }
+  assertDesktopPackage(root);
+});
+
+test("desktop submission gate inspects hidden compatibility manifests", (t) => {
+  const output = join(fixture(t), "desktop");
+  exportDistribution(source, output, undefined, { desktopOnly: true });
+  const root = join(output, "native-marketplace/plugins/snipara");
+  const path = join(root, ".claude-plugin/plugin.json");
+  const original = read(path);
+  writeFileSync(path, JSON.stringify({ ...original, hooks: "./hooks.json" }));
+  assert.throws(() => assertDesktopPackage(root), /hidden hook/);
+  writeFileSync(path, JSON.stringify(original));
+  mkdirSync(join(root, "hooks"));
+  writeFileSync(join(root, "hooks/x.json"), "{}");
+  assert.throws(() => assertDesktopPackage(root), /lifecycle hooks/);
+});
 
 test("customer distribution uses account MCP with no review project preset", (t) => {
   const output = join(fixture(t), "release");
@@ -90,7 +193,7 @@ test("native bootstrap has account MCP, all modules and no inherited project exe
         env: { SNIPARA_PROJECT: "developer-project" },
         probe: () => {
           probed = true;
-          return { status: 0, stdout: VERSIONS.companion };
+          return { status: 0, stdout: "3.7.0" };
         },
       }),
     /Choose your project/
@@ -222,4 +325,16 @@ test("listing rejects credential URLs, long subtitles and duplicate prompts", ()
       }),
     /prompts/
   );
+});
+
+test("distribution exports additional regular test modules and omits symlink fixtures", (t) => {
+  const parent=fixture(t), copy=join(parent,"plugins/snipara"), tests=join(parent,"plugins/snipara-tests");
+  cpSync(source,copy,{recursive:true});mkdirSync(tests,{recursive:true});
+  writeFileSync(join(tests,"future-surface.test.mjs"),"// additional independent regression\n");
+  writeFileSync(join(parent,"outside.mjs"),"// excluded symlink target\n");
+  symlinkSync(join(parent,"outside.mjs"),join(tests,"linked.test.mjs"));
+  const output=join(parent,"exported");exportDistribution(copy,output);
+  const exported=join(output,"native-marketplace/plugins/snipara-tests");
+  assert.equal(readFileSync(join(exported,"future-surface.test.mjs"),"utf8"),"// additional independent regression\n");
+  assert.equal(existsSync(join(exported,"linked.test.mjs")),false);
 });

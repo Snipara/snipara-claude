@@ -1,23 +1,37 @@
 # Local plugin verification — 2026-10-11
 
-## L8 runtime pin candidate — 2026-10-19
+## Directory hardening follow-up — 2026-10-16
 
-Prepared from public commit `515ee45453dc9b2d242b784d2768133f308105fc`,
-with Companion `3.7.2` and Orchestrator `1.10.0` as the only runtime pin changes.
-The existing generator produces native profile `2.0.2-profile.43be5263622f`.
-Claude marketplace `snipara-plugins`, Codex marketplace `snipara`, account MCP,
-module defaults, hooks and credential-sharing rules retain their identities.
+Public PRs #3 and #4 promoted the bundle through dev to main, final commit
+`515ee45453dc9b2d242b784d2768133f308105fc`, native version
+`2.0.2-profile.ae6fd6349734`. Main CI run 38816424783 passes on Node 20 and 22.
+All 26 package tests pass, including actual shell-hook execution for all enabled
+module profiles, child-process credential isolation and explicit vendor-key
+opt-in. Tests now live in `plugins/snipara-tests` outside the installed plugin;
+CI rejects installed test fixtures. Exported native and directory ZIP inventory
+and hashes pass. Engine pins remain Companion 3.7.0 and Orchestrator 1.9.0;
+no engine package publication or web/backend deployment was needed.
 
-All 26 public packaging/module-boundary tests pass under Node `18.20.8` and
-`24.14.1`, with no skipped tests. The published-manifest/icon/legal/MCP checker
-also passes under both runtimes. These local results do not replace the public
-GitHub Actions Node 20/22 matrix or independent review of the exact candidate.
+Final live Claude portal scan at `515ee45` passes: 48 files, 137.8 KB,
+four skills, one hook, one MCP server, zero blocking issues, five listing-only
+schema warnings and ten policy holds (eight PNG references, two credential
+environment findings). `COMMAND_SCRIPT_NOT_FOLLOWED` is cleared. The scanner
+still conservatively flags environment access despite the tested allowlist and
+explicit per-call credential flag; it does not prove a credential was sent.
+The PNG is used as data only. These findings remain for human review, not hidden
+or declared approved. Listing metadata warnings explicitly require no action.
 
-No engine package was installed from a registry for this candidate, and no
-provider, Hosted MCP, native-client update, push or publication was performed.
-Distribution remains gated on both exact engine versions being available from
-their registries, dedicated candidate review and actual launcher installation
-checks. Earlier verification records below remain historical and unchanged.
+The native session hook is a literal shell script reading only config.json.
+Installers do not inherit environment secrets; runtimes receive environment
+Snipara keys only with explicit `--with-snipara-credentials` authorization.
+Separately stored runtime credentials remain under the runtime's own control.
+Native host OAuth credentials are never copied. Hosted impact matches local
+committed base `2220cfd8` but contains no indexed plugin symbols and excludes
+the current edits; exact files and tests supply change evidence.
+
+The portal draft is not submitted. Legal attestations, reviewer approval and a
+fresh installed-host acceptance of 2.0.2 remain unverified. Prior-workflow state
+was preserved in `.snipara/workflow/plugin-directory-hardening-20261016/`.
 
 ## Claude Directory and public-repository CI — 2026-10-16
 

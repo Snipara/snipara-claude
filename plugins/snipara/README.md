@@ -123,8 +123,7 @@ node scripts/snipara.mjs companion --version
 node scripts/snipara.mjs orchestrator status --json
 ```
 
-The installer pins Companion **3.8.0** and Orchestrator **1.11.1**; publish this
-profile only after both exact package versions are available from their registries.
+The installer pins Companion **3.9.0** and Orchestrator **1.12.0**.
 It uses plugin data when supplied by the host, otherwise the workspace's
 `.snipara/plugin-runtime/`. Companion uses a private npm prefix; Orchestrator
 uses a Python virtual environment (Python 3.10+ required). No global dependency
@@ -220,3 +219,5 @@ deployment and additive migration are recorded in `VERIFICATION.md`.
 
 Formats follow [OpenAI's plugin packaging documentation](https://developers.openai.com/plugins/build/plugins)
 and [Claude Code's plugin reference](https://code.claude.com/docs/en/plugins-reference).
+
+Repository validation requires standalone Sandbox 2.3.0 or newer. Until these candidate versions are published, test them from local artifacts; do not claim registry availability. Missing/incompatible Sandbox always requires an explicit scoped user choice.

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "snipara",
-  "version": "2.0.3-profile.fc1f825ba89b",
+  "version": "2.1.0-profile.677e6bb41f1b",
   "description": "Project context, local workflow continuity and explicit orchestration in one configurable plugin.",
   "author": {
     "name": "Starbox Group Gmbh",

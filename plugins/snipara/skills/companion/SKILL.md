@@ -48,3 +48,17 @@ ask for or print key values; do not forward unrelated provider credentials.
 Checkpoint continuity requires the project folder, `.snipara` state and referenced
 files/artifacts. It does not migrate a live agent process. Use Orchestrator for
 explicit htask queues, controller execution and production proof coordination.
+
+Before repository tests or executable validation, use the module's `validation gate`
+with a Sandbox request and explicit workflow/lot scope. Probe required capabilities,
+not merely installation. If Sandbox is absent/inaccessible/incompatible, stop that
+validation and ask the user: another test environment, install/configure Sandbox,
+or continue without Sandbox (clarify local tests versus no tests). No silent host
+fallback and no automatic installation. Record the explicit choice with
+`validation choose --acknowledge-user-choice`, only after the user actually chose.
+Keep that choice scoped to the workspace, lot, profile and permissions; preserve
+it across resume without resetting budgets. A missing response is not approval.
+Use `validation run` and `validation verify` for exact-snapshot Docker evidence.
+Keep proof floors and independent review requirements even when skipping tests.
+Static reads/documentation do not require a container. Sandbox is standalone;
+no account or inference is required for its deterministic validation commands.

@@ -11,6 +11,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const usage = `Snipara plugin: one bundle for Claude Code and Codex
   build [--connection account|project] [--project <slug-or-id>] [--output <marketplace-directory>]
   export [--project <dedicated-review-slug>] --output <new-distribution-directory>
+  export-desktop --output <new-distribution-directory>
   configure --output <existing-marketplace> [--snipara on|off] [--companion on|off] [--orchestrator on|off] [--project <slug-or-id>] [--connection account|project]
   status
   install companion|orchestrator
@@ -43,13 +44,23 @@ function options(args) {
 try {
   const [action = "help", ...args] = process.argv.slice(2);
   if (["help", "--help", "-h"].includes(action)) console.log(usage);
-  else if (action === "export") {
+  else if (["export", "export-desktop"].includes(action)) {
     const opts = options(args);
     if (!opts.output || opts.connection || MODULES.some((name) => opts[name] !== undefined))
       throw new Error(
         "Export needs --output <new-directory>; optional --project creates a bound review fixture. Module switches apply to native profiles."
       );
-    console.log(JSON.stringify(exportDistribution(root, opts.output, opts.project), null, 2));
+    if (action === "export-desktop" && opts.project)
+      throw new Error("Desktop submission must not preset a review project.");
+    console.log(
+      JSON.stringify(
+        exportDistribution(root, opts.output, opts.project, {
+          desktopOnly: action === "export-desktop",
+        }),
+        null,
+        2
+      )
+    );
   } else if (["build", "configure"].includes(action)) {
     const opts = options(args);
     if (action === "configure" && !opts.output)
@@ -84,8 +95,12 @@ try {
     installRuntime(readConfig(root), args[0]);
   } else if (["companion", "orchestrator"].includes(action)) {
     const shareSniparaCredentials = args[0] === "--with-snipara-credentials";
-    const call = invocation(readConfig(root), action,
-      shareSniparaCredentials ? args.slice(1) : args, { shareSniparaCredentials });
+    const call = invocation(
+      readConfig(root),
+      action,
+      shareSniparaCredentials ? args.slice(1) : args,
+      { shareSniparaCredentials }
+    );
     const result = spawnSync(call.command, call.args, call.options);
     if (result.error) throw new Error(`Unable to start ${action}.`);
     process.exitCode = result.status ?? 1;

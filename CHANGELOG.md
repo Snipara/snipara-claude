@@ -1,5 +1,11 @@
 # 2.0.0 — 2026-10-12
 
+## 2.1.0
+
+- Pin Companion 3.9.0 and Orchestrator 1.12.0.
+- Add hook-free desktop exports and generic regression-test distribution.
+- Preserve explicit project setup and local-engine credential isolation.
+
 - Shared native plugin for Claude Code and Codex, with Snipara, Companion and Orchestrator enabled by default and independent off switches.
 - Account OAuth asks users to choose an accessible project; plugin MCP is named snipara-plugin to coexist with global connections.
 - Companion 3.7.0 and Orchestrator 1.9.0 are pinned, separately installed local engines. Enabling the plugin does not start workers or controllers.

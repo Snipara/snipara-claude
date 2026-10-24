@@ -44,8 +44,8 @@ Ask Snipara for a documentation answer with citations, and check the source sect
 | Companion | Local plans, checkpoints, evidence and resumption | Removes the skill and rejects its launcher/install calls |
 | Orchestrator | Explicit controller plans and task/proof coordination | Removes the skill and rejects its launcher/install calls |
 
-Enabling modules does not install engines or start work. Companion **3.8.0** and
-Orchestrator **1.11.1** use separate local installations and account configuration.
+Enabling modules does not install engines or start work. Companion **3.9.0** and
+Orchestrator **1.12.0** use separate local installations and account configuration.
 OAuth credentials stay with the native host. Local engines need explicit project
 alignment and separate hosted credentials. See [the native package guide](plugins/snipara/README.md).
 

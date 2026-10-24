@@ -81,7 +81,7 @@ export function buildPlugin(
   outputPath,
   inputConfig,
   replace = false,
-  { bootstrap = false, marketplaceName = "snipara-local" } = {}
+  { bootstrap = false, marketplaceName = "snipara-local", desktopOnly = false } = {}
 ) {
   const config = validateConfig(inputConfig, !bootstrap);
   const outputRoot = resolve(outputPath);
@@ -121,8 +121,14 @@ export function buildPlugin(
         cpSync(join(sourceRoot, name), join(root, name), { recursive: true, dereference: false });
     }
     const manifest = JSON.parse(readFileSync(join(root, "plugin.json"), "utf8"));
+    // A desktop submission must remain hook-free when the installed settings
+    // skill builds or configures a project profile later.
+    desktopOnly ||= manifest.extensions?.["com.openai"]?.requires_local_executor === true;
+    const desktopMetadata = desktopOnly ? manifest.extensions?.["com.openai"] : null;
+    if (desktopOnly) rmSync(join(root, "scripts", "session-start.sh"), { force: true });
     const baseVersion = manifest.version.replace(/-profile\.[a-f0-9]+$/, "");
     const fingerprint = createHash("sha256").update(JSON.stringify(config));
+    if (desktopOnly) fingerprint.update("codex-desktop-without-hooks-v1");
     for (const directory of ["catalog", "lib", "scripts"]) {
       for (const path of files(root, directory))
         fingerprint.update(path).update(readFileSync(join(root, path)));
@@ -136,8 +142,11 @@ export function buildPlugin(
           ...(existsSync(join(root, "assets", "icon.png"))
             ? { logo: "./assets/icon.png", composerIcon: "./assets/icon.png" }
             : {}),
+          ...(desktopMetadata?.interface || {}),
         },
-        hooks: "./hooks/hooks.json",
+        ...(desktopMetadata?.review ? { review: desktopMetadata.review } : {}),
+        ...(desktopMetadata?.publication ? { publication: desktopMetadata.publication } : {}),
+        ...(desktopOnly ? { requires_local_executor: true } : { hooks: "./hooks/hooks.json" }),
         ...(bootstrap ? { onboardingSkill: "./skills/settings/SKILL.md" } : {}),
       },
     };
@@ -147,7 +156,13 @@ export function buildPlugin(
     const url = config.connection === "account" || config.project ? endpoint(config) : null;
     json(join(root, "mcp.json"), {
       $schema: "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
-      mcpServers: url ? { [MCP_SERVER_NAME]: { type: "streamable-http", url } } : {},
+      mcpServers: url
+        ? {
+            // Codex rejects unknown streamable-http fields, including the
+            // portal auth extension. Native OAuth uses endpoint discovery.
+            [MCP_SERVER_NAME]: { type: "streamable-http", url },
+          }
+        : {},
     });
     // Claude and older Codex loaders use the compatibility HTTP transport spelling.
     json(join(root, ".mcp.json"), {
@@ -169,10 +184,20 @@ export function buildPlugin(
       ...identity,
       skills: "./skills/",
       mcpServers: "./.mcp.json",
-      hooks: "./hooks/hooks.json",
+      ...(desktopOnly ? { requires_local_executor: true } : { hooks: "./hooks/hooks.json" }),
       interface: manifest.extensions["com.openai"].interface,
-      ...(bootstrap
-        ? { extensions: { "com.openai": { onboardingSkill: "./skills/settings/SKILL.md" } } }
+      ...(bootstrap || desktopOnly
+        ? {
+            extensions: {
+              "com.openai": {
+                ...(desktopMetadata?.review ? { review: desktopMetadata.review } : {}),
+                ...(desktopMetadata?.publication
+                  ? { publication: desktopMetadata.publication }
+                  : {}),
+                ...(bootstrap ? { onboardingSkill: "./skills/settings/SKILL.md" } : {}),
+              },
+            },
+          }
         : {}),
     });
     mkdirSync(join(root, "skills"));
@@ -182,24 +207,26 @@ export function buildPlugin(
     ]) {
       cpSync(join(root, "catalog", name), join(root, "skills", name), { recursive: true });
     }
-    mkdirSync(join(root, "hooks"));
-    json(join(root, "hooks", "hooks.json"), {
-      hooks: Object.values(config.modules).some(Boolean)
-        ? {
-            SessionStart: [
-              {
-                hooks: [
-                  {
-                    type: "command",
-                    command: 'sh "${CLAUDE_PLUGIN_ROOT}/scripts/session-start.sh"',
-                    timeout: 5,
-                  },
-                ],
-              },
-            ],
-          }
-        : {},
-    });
+    if (!desktopOnly) {
+      mkdirSync(join(root, "hooks"));
+      json(join(root, "hooks", "hooks.json"), {
+        hooks: Object.values(config.modules).some(Boolean)
+          ? {
+              SessionStart: [
+                {
+                  hooks: [
+                    {
+                      type: "command",
+                      command: 'sh "${CLAUDE_PLUGIN_ROOT}/scripts/session-start.sh"',
+                      timeout: 5,
+                    },
+                  ],
+                },
+              ],
+            }
+          : {},
+      });
+    }
     mkdirSync(join(staging, ".claude-plugin"));
     json(join(staging, ".claude-plugin", "marketplace.json"), {
       name: marketplaceName,

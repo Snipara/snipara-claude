@@ -154,6 +154,64 @@ export function assertDirectoryPackage(root) {
   return names;
 }
 
+export function assertDesktopPackage(root) {
+  const names = inventory(root).map((item) => item.path);
+  if (
+    names.some(
+      (name) =>
+        name === "hooks" ||
+        name.startsWith("hooks/") ||
+        name.startsWith("test/") ||
+        name === ".app.json"
+    )
+  )
+    throw new Error("Desktop submission cannot contain lifecycle hooks, tests or app bindings.");
+  for (const name of ["plugin.json", ".claude-plugin/plugin.json", ".codex-plugin/plugin.json"]) {
+    const manifest = JSON.parse(readFileSync(join(root, name), "utf8"));
+    const openai = manifest.extensions?.["com.openai"];
+    if (
+      manifest.apps != null ||
+      manifest.hooks != null ||
+      openai?.apps != null ||
+      openai?.hooks != null
+    )
+      throw new Error("Desktop submission has a hidden hook or app binding.");
+    if (
+      (name === "plugin.json" && openai?.requires_local_executor !== true) ||
+      (name === ".codex-plugin/plugin.json" && manifest.requires_local_executor !== true)
+    )
+      throw new Error("Desktop execution must be declared in both supported manifests.");
+  }
+  const config = readConfig(root);
+  if (
+    config.project !== null ||
+    config.connection !== "account" ||
+    !config.modules.snipara ||
+    !config.modules.companion ||
+    !config.modules.orchestrator
+  )
+    throw new Error("Full desktop submission must retain all modules without a preset project.");
+  for (const name of ["snipara", "settings", "companion", "orchestrator"])
+    if (!names.includes(`skills/${name}/SKILL.md`))
+      throw new Error("Missing desktop skill: " + name);
+  for (const [name, type] of [
+    ["mcp.json", "streamable-http"],
+    [".mcp.json", "http"],
+  ]) {
+    const { mcpServers } = JSON.parse(readFileSync(join(root, name), "utf8"));
+    const server = mcpServers?.[MCP_SERVER_NAME];
+    if (
+      Object.keys(mcpServers || {}).join() !== MCP_SERVER_NAME ||
+      !server ||
+      Object.keys(server).sort().join() !== "type,url" ||
+      server.type !== type ||
+      server.url !== "https://api.snipara.com/mcp"
+    )
+      throw new Error("Desktop MCP must use the native-compatible OAuth discovery declaration.");
+  }
+  return names;
+}
+
 function legal(root, listing) {
   writeFileSync(
     join(root, "NOTICE"),
@@ -185,7 +243,7 @@ function archive(root, target) {
   return { file: target, sha256: sha(readFileSync(target)), files: names.length };
 }
 
-export function exportDistribution(sourceRoot, destination, project) {
+export function exportDistribution(sourceRoot, destination, project, { desktopOnly = false } = {}) {
   const source = realpathSync(sourceRoot);
   const config = validateConfig(
     {
@@ -196,6 +254,13 @@ export function exportDistribution(sourceRoot, destination, project) {
     true
   );
   const listing = validateListing(JSON.parse(readFileSync(join(source, "listing.json"), "utf8")));
+  const desktopCases = JSON.parse(readFileSync(join(source, "review-cases.json"), "utf8"));
+  if (desktopOnly)
+    desktopCases.negative[1] = {
+      description:
+        "N2: Gmail access is outside Snipara's declared capabilities. Do not call Snipara or local runtime tools, install a connector, or claim access to an external mailbox.",
+      prompt: "Read my Gmail inbox with Snipara and summarize today's unread messages.",
+    };
   const requested = resolve(destination);
   // Never update an existing Git checkout, release or user directory in place.
   if (existsSync(requested))
@@ -210,7 +275,7 @@ export function exportDistribution(sourceRoot, destination, project) {
       join(stage, "native-marketplace"),
       { ...config, project: null, connection: "account" },
       false,
-      { bootstrap: true, marketplaceName: "snipara" }
+      { bootstrap: true, marketplaceName: "snipara", desktopOnly }
     );
     const nativeRoot = native.plugin;
     for (const name of ["plugin.json", ".claude-plugin/plugin.json", ".codex-plugin/plugin.json"]) {
@@ -220,7 +285,51 @@ export function exportDistribution(sourceRoot, destination, project) {
       delete manifest.license;
       if (listing.publisher) manifest.author.name = listing.publisher;
       if (listing.license && listing.publisher) manifest.license = listing.license;
+      if (desktopOnly) {
+        const interfaceFields = { ...listing.interface, developerName: listing.publisher };
+        interfaceFields.shortDescription = "Context, workflows and control";
+        interfaceFields.longDescription =
+          "Desktop plugin for sourced Snipara project context and reviewed memory, local Companion checkpoints and explicit Orchestrator coordination. Sign in to one authorized project through native OAuth. Companion and Orchestrator are optional, independently disableable local programs installed only on request at pinned versions. They require an explicitly configured project and separate runtime authentication. No lifecycle hook runs at session start. Tasks, memory writes and runtime credential sharing require authorization. A Snipara account and authorized project access are required.";
+        interfaceFields.capabilities = [
+          "Retrieve sourced context",
+          "Recall reviewed decisions",
+          "Save local checkpoints",
+          "Coordinate explicit workflows",
+        ];
+        if (name === "plugin.json")
+          Object.assign(manifest.extensions["com.openai"], {
+            interface: interfaceFields,
+            review: { ...listing.review, test_cases: desktopCases },
+            publication: listing.publication,
+          });
+        if (name === ".codex-plugin/plugin.json")
+          Object.assign(manifest, {
+            interface: interfaceFields,
+            extensions: {
+              ...manifest.extensions,
+              "com.openai": {
+                ...manifest.extensions?.["com.openai"],
+                review: {
+                  ...listing.review,
+                  test_cases: desktopCases,
+                },
+                publication: listing.publication,
+              },
+            },
+          });
+      }
       json(join(nativeRoot, name), manifest);
+    }
+    if (desktopOnly) {
+      json(join(nativeRoot, "review-cases.json"), desktopCases);
+      const readme = join(nativeRoot, "README.md");
+      writeFileSync(
+        readme,
+        "# Snipara for Codex desktop — submission candidate\n\n" +
+          "All three modules are retained. This candidate requires local execution and has no lifecycle hooks. Companion and Orchestrator remain optional programs installed and invoked only on request. Native Snipara OAuth uses the hosted remote MCP; local runtime credentials remain separate. This remote-MCP-plus-local-program combination still requires OpenAI eligibility confirmation; no submission, policy approval or clean-host acceptance is claimed.\n\n" +
+          readFileSync(readme, "utf8")
+      );
+      assertDesktopPackage(nativeRoot);
     }
     const marketPath = join(stage, "native-marketplace", ".claude-plugin", "marketplace.json");
     const market = JSON.parse(readFileSync(marketPath, "utf8"));
@@ -233,7 +342,7 @@ export function exportDistribution(sourceRoot, destination, project) {
     if (existsSync(tests)) {
       const destination = join(stage, "native-marketplace", "plugins", "snipara-tests");
       mkdirSync(destination);
-      for (const name of ["plugin.test.mjs", "distribution.test.mjs"])
+      for (const name of readdirSync(tests).filter((name) => name.endsWith(".test.mjs") && lstatSync(join(tests, name)).isFile()))
         cpSync(join(tests, name), join(destination, name));
     }
     const markerPath = join(stage, "native-marketplace", ".snipara-native-plugin.json");
@@ -333,7 +442,14 @@ export function exportDistribution(sourceRoot, destination, project) {
     const archives = [
       {
         variant: "native",
-        ...archive(nativeRoot, join(stage, "archives", "snipara-native-" + base.version + ".zip")),
+        ...archive(
+          nativeRoot,
+          join(
+            stage,
+            "archives",
+            (desktopOnly ? "snipara-codex-desktop-" : "snipara-native-") + base.version + ".zip"
+          )
+        ),
       },
       {
         variant: "directory-draft",
@@ -350,6 +466,9 @@ export function exportDistribution(sourceRoot, destination, project) {
       license: listing.license,
       licenseScope: listing.licenseScope,
       native: {
+        target: desktopOnly ? "codex-desktop" : "native",
+        requiresLocalExecutor: desktopOnly,
+        lifecycleHooks: !desktopOnly,
         project: null,
         connection: "account",
         modules: config.modules,
@@ -362,6 +481,12 @@ export function exportDistribution(sourceRoot, destination, project) {
           "Clean native installation and customer project setup acceptance not recorded",
           "Account MCP/OAuth migration and hosted deployment not verified",
           "Dedicated public repository and installation URL not verified",
+          ...(desktopOnly
+            ? [
+                "OpenAI desktop eligibility for remote MCP plus local runtimes unverified",
+                "Exact desktop package clean installation and main workflows unverified",
+              ]
+            : []),
         ],
       },
       directory: {

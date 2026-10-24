@@ -2,11 +2,19 @@ import assert from "node:assert/strict";
 import { readFileSync, realpathSync, existsSync } from "node:fs";
 import { resolve, sep } from "node:path";
 
+// Existing marketplace identities are part of the public install/update contract.
+const claudeMarketplace = JSON.parse(readFileSync(".claude-plugin/marketplace.json", "utf8"));
+const codexMarketplace = JSON.parse(readFileSync(".agents/plugins/marketplace.json", "utf8"));
+assert.equal(claudeMarketplace.name, "snipara-plugins");
+assert.equal(codexMarketplace.name, "snipara");
+assert.ok(claudeMarketplace.plugins.some(item => item.name === "snipara" && item.source === "./plugins/snipara"));
+
 const root = realpathSync("plugins/snipara");
 const read = path => JSON.parse(readFileSync(resolve(root, path), "utf8"));
 const manifest = read(".claude-plugin/plugin.json");
 assert.ok(!existsSync(resolve(root, "test")), "test fixtures must stay outside the installed plugin");
 assert.equal(manifest.name, "snipara");
+assert.equal(claudeMarketplace.plugins.find(item => item.name === manifest.name).version, manifest.version);
 assert.ok(manifest.version && manifest.description);
 for (const field of ["privacyPolicyUrl", "supportUrl", "termsOfServiceUrl", "documentationUrl"]) {
   const url = new URL(manifest[field]);
