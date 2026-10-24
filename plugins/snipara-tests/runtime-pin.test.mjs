@@ -27,7 +27,7 @@ for(const version of ['3.7.0','3.7.1','3.7.2','3.7.3','3.7.4','3.8.0',VERSIONS.c
  });
 }
 
-for (const version of ['1.10.0','1.11.0','1.11.1',VERSIONS.orchestrator]) {
+for (const version of ['1.10.0','1.11.0','1.11.1','1.12.0',VERSIONS.orchestrator]) {
  test(`Orchestrator private runtime ${version} obeys the exact pin`, t => {
   const data=mkdtempSync(join(tmpdir(),'plugin-orchestrator-pin-'));t.after(()=>rmSync(data,{recursive:true,force:true}));
   const local=join(data,'orchestrator',process.platform==='win32'?'Scripts':'bin',process.platform==='win32'?'snipara-orchestrator.exe':'snipara-orchestrator');

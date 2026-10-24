@@ -1,5 +1,10 @@
 # 2.0.0 — 2026-10-12
 
+## 2.1.1
+
+- Pin Orchestrator 1.12.1, preserving native plugin runtime routing without forwarding credentials.
+- Reject the previous patch runtime and preserve both marketplace identities.
+
 ## 2.1.0
 
 - Pin Companion 3.9.0 and Orchestrator 1.12.0.

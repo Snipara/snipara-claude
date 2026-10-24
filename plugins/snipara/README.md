@@ -123,7 +123,7 @@ node scripts/snipara.mjs companion --version
 node scripts/snipara.mjs orchestrator status --json
 ```
 
-The installer pins Companion **3.9.0** and Orchestrator **1.12.0**.
+The installer pins Companion **3.9.0** and Orchestrator **1.12.1**.
 It uses plugin data when supplied by the host, otherwise the workspace's
 `.snipara/plugin-runtime/`. Companion uses a private npm prefix; Orchestrator
 uses a Python virtual environment (Python 3.10+ required). No global dependency
