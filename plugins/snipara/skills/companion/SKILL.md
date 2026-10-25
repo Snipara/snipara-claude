@@ -62,3 +62,12 @@ Use `validation run` and `validation verify` for exact-snapshot Docker evidence.
 Keep proof floors and independent review requirements even when skipping tests.
 Static reads/documentation do not require a container. Sandbox is standalone;
 no account or inference is required for its deterministic validation commands.
+
+For an explicitly authorized hosted refresh inside a Codex worker with a scoped
+native network proxy, place `--with-native-network` immediately after `companion`.
+It preserves only validated loopback HTTP/HTTPS proxy routes and enables Node's
+environment-proxy support for that process. The host must separately allow the
+required exact domains; the flag grants no host permissions, forwards no API keys
+and writes no global configuration. Missing or non-loopback native proxy routes
+fail closed. It is independent of `--with-snipara-credentials`; do not add either
+flag implicitly or retry with broader network access after failure.

@@ -5,7 +5,7 @@ import { requireModule, VERSIONS } from "./config.mjs";
 
 // Do not hand unrelated provider keys, package tokens or loader-injection flags
 // to an optional runtime or package installer. Native MCP OAuth stays in the host.
-export function runtimeEnvironment(env, shareSniparaCredentials = false) {
+export function runtimeEnvironment(env, shareSniparaCredentials = false, shareNativeNetwork = false) {
   const safe = {};
   for (const key of [
     "PATH", "HOME", "USER", "LOGNAME", "LANG", "LC_ALL", "TERM",
@@ -19,6 +19,21 @@ export function runtimeEnvironment(env, shareSniparaCredentials = false) {
     for (const key of ["SNIPARA_API_KEY", "RLM_API_KEY"]) {
       if (typeof env[key] === "string") safe[key] = env[key];
     }
+  }
+  if (shareNativeNetwork) {
+    if (env.CODEX_NETWORK_PROXY_ACTIVE !== "1")
+      throw new Error("Native network forwarding requires an active Codex network proxy.");
+    for (const key of ["HTTP_PROXY", "HTTPS_PROXY"]) {
+      let url;
+      try { url = new URL(env[key]); } catch { throw new Error("Missing native loopback proxy route."); }
+      if (url.protocol !== "http:" || !["127.0.0.1", "[::1]", "localhost"].includes(url.hostname)
+          || !url.port || url.username || url.password || url.pathname !== "/" || url.search || url.hash)
+        throw new Error("Native proxy route must be an uncredentialed loopback HTTP endpoint.");
+      safe[key] = url.href;
+    }
+    // Native direct egress remains blocked by the host. Do not forward NO_PROXY,
+    // loader flags or arbitrary provider secrets; Node must use the owned proxy.
+    safe.NODE_USE_ENV_PROXY = "1";
   }
   return safe;
 }
@@ -34,7 +49,7 @@ export function invocation(
   name,
   args,
   { env = process.env, cwd = process.cwd(), probe = spawnSync,
-    shareSniparaCredentials = false } = {}
+    shareSniparaCredentials = false, shareNativeNetwork = false } = {}
 ) {
   requireModule(config, name); // Must run before probing binaries or spawning any process.
   if (
@@ -59,8 +74,10 @@ export function invocation(
           : "Snipara is off; this profile permits local status/help only. Enable Snipara for hosted or execution workflows."
       );
   }
+  if (shareNativeNetwork && name !== "companion")
+    throw new Error("Native network forwarding currently supports Companion only.");
   const runtimeEnv = {
-    ...runtimeEnvironment(env, shareSniparaCredentials),
+    ...runtimeEnvironment(env, shareSniparaCredentials, shareNativeNetwork),
     SNIPARA_COMPANION_SKIP_NPM_VERSION_CHECK: "1",
   };
   if (config.project) {

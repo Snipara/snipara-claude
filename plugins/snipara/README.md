@@ -123,7 +123,7 @@ node scripts/snipara.mjs companion --version
 node scripts/snipara.mjs orchestrator status --json
 ```
 
-The installer pins Companion **3.9.0** and Orchestrator **1.13.0**.
+The installer pins Companion **3.9.0** and Orchestrator **1.13.1**.
 It uses plugin data when supplied by the host, otherwise the workspace's
 `.snipara/plugin-runtime/`. Companion uses a private npm prefix; Orchestrator
 uses a Python virtual environment (Python 3.10+ required). No global dependency
@@ -236,3 +236,16 @@ smallest approved validation workspace before startup. Its deterministic Docker
 tests need no LLM API key or Snipara account. Companion 3.9.0 records workflow
 continuity; an exact saved snapshot is distinct from a successful hosted refresh.
 Check all three installed versions and start a fresh native session after updating.
+
+## Hosted CLI refresh (plugin 2.2.1)
+
+In an explicitly authorized read-only Codex run, Orchestrator 1.13.1 supports
+`--network-domain api.snipara.com --network-domain www.snipara.com` together with
+`--sandbox read-only --approval-policy never`. The native proxy limits destinations
+without granting filesystem writes. Offline remains the default.
+
+Use `node <installed-plugin>/scripts/snipara.mjs companion --with-native-network
+workflow resume --include-session-context --json` to preserve the native loopback
+proxy route for that invocation. This flag forwards no provider keys or loader
+flags, requires the active host proxy, and is separate from Snipara credential
+sharing. It does not change global permissions or restore a live process.
