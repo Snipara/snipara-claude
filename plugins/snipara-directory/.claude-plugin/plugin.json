@@ -1,0 +1,23 @@
+{
+  "name": "snipara",
+  "version": "2.2.2",
+  "description": "Search project knowledge and retrieve sourced answers through Snipara Hosted MCP.",
+  "author": {
+    "name": "Starbox Group Gmbh",
+    "url": "https://www.snipara.com"
+  },
+  "homepage": "https://www.snipara.com",
+  "repository": "https://github.com/Snipara/snipara-claude",
+  "license": "MIT",
+  "keywords": [
+    "context",
+    "documentation",
+    "sources",
+    "project-knowledge"
+  ],
+  "icon": "./assets/icon.png",
+  "privacyPolicyUrl": "https://www.snipara.com/privacy",
+  "supportUrl": "https://www.snipara.com/contact",
+  "termsOfServiceUrl": "https://www.snipara.com/terms",
+  "documentationUrl": "https://www.snipara.com/docs/integration/claude-code"
+}

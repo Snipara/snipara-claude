@@ -65,3 +65,16 @@ See [review preparation](review/README.md) for exact verification and pending it
 
 [Website](https://www.snipara.com) · [Support](https://www.snipara.com/contact) ·
 [Privacy](https://www.snipara.com/privacy) · [Terms](https://www.snipara.com/terms)
+
+## Claude Directory candidate
+
+The separate `plugins/snipara-directory` folder contains Snipara 2.2.2 for
+Claude Directory review: remote OAuth MCP and retrieval skills, without hooks,
+scripts or local workflow runtimes. It is prepared, not approved or listed.
+The existing native marketplace continues to use `plugins/snipara`; its install
+commands, module setup and version are unchanged. Submit the new folder from
+the same organization as the Snipara MCP connector. The old Directory submission
+cannot change its plugin path; do not replace the native folder to update it.
+
+See [the directory package](plugins/snipara-directory/README.md) for its scope
+and [Anthropic submission instructions](https://claude.com/docs/plugins/submit).
