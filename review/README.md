@@ -50,7 +50,7 @@ the final ZIP. The demo recording has not yet been made.
 ## Portals
 
 Claude: https://claude.ai/directory/manage — submit the remote MCP connector first,
-then the `plugins/snipara` bundle from this repository under the same organization.
+then only the eight-file `plugins/snipara-directory` package from this repository under the same organization. Never select the repository root, native `plugins/snipara` profile or `authoring` tree as the Directory scan root. If the portal cannot honor a plugin subdirectory, use a separate reviewed eight-file-only source ref; do not add CI/scripts/tests to that ref.
 The `claude-plugins-official` marketplace is a separate partner channel.
 
 OpenAI: https://platform.openai.com/plugins — upload the hook-free `directory-draft`

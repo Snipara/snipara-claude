@@ -14,11 +14,23 @@ import {
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
+import { TextDecoder } from "node:util";
 import { buildPlugin } from "./build.mjs";
 import { MCP_SERVER_NAME, readConfig, validateConfig } from "./config.mjs";
 
 const json = (path, value) => writeFileSync(path, JSON.stringify(value, null, 2) + "\n");
 const sha = (bytes) => createHash("sha256").update(bytes).digest("hex");
+export const CLAUDE_DIRECTORY_VERSION = "2.2.3";
+const CLAUDE_DIRECTORY_FILES = [
+  ".claude-plugin/plugin.json",
+  ".mcp.json",
+  "LICENSE",
+  "NOTICE",
+  "README.md",
+  "assets/icon.png",
+  "skills/connect/SKILL.md",
+  "skills/snipara/SKILL.md",
+];
 const within = (parent, child) => {
   const path = relative(parent, child);
   return path === "" || (!isAbsolute(path) && path !== ".." && !path.startsWith(".." + sep));
@@ -154,6 +166,136 @@ export function assertDirectoryPackage(root) {
   return names;
 }
 
+/** Validate the separate Claude package for an organization without Verified status. */
+export function assertClaudeDirectoryPackage(root) {
+  const allowedDirectories = new Set([".claude-plugin", "assets", "skills", "skills/connect", "skills/snipara"]);
+  const inspectDirectories = (prefix = "") => {
+    for (const name of readdirSync(join(root, prefix))) {
+      const path = join(prefix, name);
+      if (lstatSync(join(root, path)).isDirectory()) {
+        if (!allowedDirectories.has(path))
+          throw new Error("Claude directory package has an unexpected directory: " + path);
+        inspectDirectories(path);
+      }
+    }
+  };
+  inspectDirectories();
+  const files = inventory(root);
+  if (files.map(({ path }) => path).join("\n") !== CLAUDE_DIRECTORY_FILES.join("\n"))
+    throw new Error("Claude directory package has missing or unexpected files.");
+  for (const { path, bytes } of files) {
+    const file = join(root, path);
+    const data = readFileSync(file);
+    if ((lstatSync(file).mode & 0o111) !== 0)
+      throw new Error("Claude directory files must not be executable: " + path);
+    if (path === "assets/icon.png") {
+      if (
+        bytes > 256 * 1024 ||
+        !data.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])) ||
+        !data.subarray(-12).equals(Buffer.from([0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130]))
+      )
+        throw new Error("Claude directory icon must be a bounded PNG image.");
+      continue;
+    }
+    if (bytes > 256 * 1024 || data.includes(0))
+      throw new Error("Claude directory text must be bounded UTF-8 without NUL bytes: " + path);
+    let content;
+    try {
+      content = new TextDecoder("utf-8", { fatal: true }).decode(data);
+    } catch {
+      throw new Error("Claude directory text must be valid UTF-8: " + path);
+    }
+    if (content.startsWith("#!"))
+      throw new Error("Claude directory files must not contain a shebang: " + path);
+  }
+  const manifest = JSON.parse(readFileSync(join(root, ".claude-plugin/plugin.json"), "utf8"));
+  const manifestKeys = new Set([
+    "name", "version", "description", "author", "homepage", "repository", "license",
+    "keywords", "icon", "privacyPolicyUrl", "supportUrl", "termsOfServiceUrl", "documentationUrl",
+  ]);
+  if (
+    Object.keys(manifest).some((key) => !manifestKeys.has(key)) ||
+    manifest.name !== "snipara" || manifest.version !== CLAUDE_DIRECTORY_VERSION ||
+    manifest.icon !== "./assets/icon.png"
+  )
+    throw new Error("Claude directory manifest has an unsupported component or identity.");
+  const mcp = JSON.parse(readFileSync(join(root, ".mcp.json"), "utf8"));
+  const server = mcp.mcpServers?.[MCP_SERVER_NAME];
+  if (
+    Object.keys(mcp).join() !== "mcpServers" ||
+    Object.keys(mcp.mcpServers || {}).join() !== MCP_SERVER_NAME ||
+    !server || Object.keys(server).sort().join() !== "type,url" ||
+    server.type !== "http" || server.url !== "https://api.snipara.com/mcp"
+  )
+    throw new Error("Claude directory MCP must use account OAuth without credentials or commands.");
+  return files;
+}
+
+/** Prepare a Claude-only bundle; never mutate the native or OpenAI distributions. */
+export function exportClaudeDirectory(sourceRoot, destination) {
+  const source = realpathSync(sourceRoot);
+  const requested = resolve(destination);
+  if (existsSync(requested)) throw new Error("Distribution output already exists; choose a new destination.");
+  const target = join(realpathSync(dirname(requested)), relative(dirname(requested), requested));
+  if (within(source, target) || within(target, source))
+    throw new Error("Distribution output cannot overlap source.");
+  const listing = validateListing(JSON.parse(readFileSync(join(source, "listing.json"), "utf8")));
+  if (!listing.publisher || !listing.license)
+    throw new Error("Claude directory needs a confirmed publisher and license.");
+  const stage = mkdtempSync(join(dirname(target), ".snipara-claude-directory-"));
+  try {
+    const root = join(stage, "plugin");
+    for (const directory of [".claude-plugin", "assets", "skills/connect", "skills/snipara"])
+      mkdirSync(join(root, directory), { recursive: true });
+    json(join(root, ".claude-plugin/plugin.json"), {
+      name: "snipara",
+      version: CLAUDE_DIRECTORY_VERSION,
+      description: "Search project knowledge and retrieve sourced answers through Snipara Hosted MCP.",
+      author: { name: listing.publisher, url: listing.interface.websiteURL },
+      homepage: listing.interface.websiteURL,
+      repository: listing.repositoryURL,
+      license: listing.license,
+      keywords: ["context", "documentation", "sources", "project-knowledge"],
+      icon: "./assets/icon.png",
+      privacyPolicyUrl: listing.interface.privacyPolicyURL,
+      supportUrl: listing.interface.supportURL,
+      termsOfServiceUrl: listing.interface.termsOfServiceURL,
+      documentationUrl: "https://www.snipara.com/docs/integration/claude-code",
+    });
+    json(join(root, ".mcp.json"), {
+      mcpServers: { [MCP_SERVER_NAME]: { type: "http", url: "https://api.snipara.com/mcp" } },
+    });
+    cpSync(join(source, "assets/icon.png"), join(root, "assets/icon.png"));
+    for (const name of ["connect", "snipara"])
+      cpSync(join(source, "catalog/claude-directory", name, "SKILL.md"), join(root, "skills", name, "SKILL.md"));
+    cpSync(join(source, "catalog/claude-directory/README.md"), join(root, "README.md"));
+    legal(root, listing);
+    const files = assertClaudeDirectoryPackage(root);
+    const zip = archive(root, join(stage, "snipara-claude-directory-" + CLAUDE_DIRECTORY_VERSION + ".zip"));
+    const receipt = {
+      variant: "claude-directory",
+      version: CLAUDE_DIRECTORY_VERSION,
+      submitted: false,
+      approved: false,
+      sourceInventory: inventory(source),
+      packageInventory: files,
+      archive: { ...zip, file: relative(stage, zip.file) },
+      remainingChecks: [
+        "Fresh Claude installation, OAuth and sourced-answer acceptance",
+        "Public repository layout and exact tracked commit",
+        "Remote MCP connector listing and plugin pairing from the same organization",
+        "Anthropic portal validation, scan, reviewer decision and publication",
+      ],
+    };
+    json(join(stage, "preparation.json"), receipt);
+    if (existsSync(target)) throw new Error("Output appeared during export; refusing to overwrite it.");
+    renameSync(stage, target);
+    return { output: target, ...receipt };
+  } finally {
+    if (existsSync(stage)) rmSync(stage, { recursive: true, force: true });
+  }
+}
+
 export function assertDesktopPackage(root) {
   const names = inventory(root).map((item) => item.path);
   if (
@@ -185,7 +327,7 @@ export function assertDesktopPackage(root) {
   const config = readConfig(root);
   if (
     config.project !== null ||
-    config.connection !== "account" ||
+    config.connection !== "source" ||
     !config.modules.snipara ||
     !config.modules.companion ||
     !config.modules.orchestrator
@@ -194,20 +336,10 @@ export function assertDesktopPackage(root) {
   for (const name of ["snipara", "settings", "companion", "orchestrator"])
     if (!names.includes(`skills/${name}/SKILL.md`))
       throw new Error("Missing desktop skill: " + name);
-  for (const [name, type] of [
-    ["mcp.json", "streamable-http"],
-    [".mcp.json", "http"],
-  ]) {
+  for (const name of ["mcp.json", ".mcp.json"]) {
     const { mcpServers } = JSON.parse(readFileSync(join(root, name), "utf8"));
-    const server = mcpServers?.[MCP_SERVER_NAME];
-    if (
-      Object.keys(mcpServers || {}).join() !== MCP_SERVER_NAME ||
-      !server ||
-      Object.keys(server).sort().join() !== "type,url" ||
-      server.type !== type ||
-      server.url !== "https://api.snipara.com/mcp"
-    )
-      throw new Error("Desktop MCP must use the native-compatible OAuth discovery declaration.");
+    if (!mcpServers || Object.keys(mcpServers).length)
+      throw new Error("Native source profiles must not bundle a bypassing account MCP connection.");
   }
   return names;
 }
@@ -273,7 +405,7 @@ export function exportDistribution(sourceRoot, destination, project, { desktopOn
     const native = buildPlugin(
       source,
       join(stage, "native-marketplace"),
-      { ...config, project: null, connection: "account" },
+      { ...config, project: null, connection: "source" },
       false,
       { bootstrap: true, marketplaceName: "snipara", desktopOnly }
     );
@@ -289,7 +421,7 @@ export function exportDistribution(sourceRoot, destination, project, { desktopOn
         const interfaceFields = { ...listing.interface, developerName: listing.publisher };
         interfaceFields.shortDescription = "Context, workflows and control";
         interfaceFields.longDescription =
-          "Desktop plugin for sourced Snipara project context and reviewed memory, local Companion checkpoints and explicit Orchestrator coordination. Sign in to one authorized project through native OAuth. Companion and Orchestrator are optional, independently disableable local programs installed only on request at pinned versions. They require an explicitly configured project and separate runtime authentication. No lifecycle hook runs at session start. Tasks, memory writes and runtime credential sharing require authorization. A Snipara account and authorized project access are required.";
+          "Desktop plugin for sourced Snipara project context and reviewed memory, local Companion checkpoints and explicit Orchestrator coordination. Connect the current repository through the settings skill, approve its project in your browser, and reload the trusted project. The local component keeps credentials per source and checks its repository association before requests. Use a new chat/session when switching repositories unless the host's project reload is qualified. Companion and Orchestrator are optional local programs installed only on request at pinned versions, with separate runtime authentication. No lifecycle hook runs at session start. A Snipara account and authorized project access are required.";
         interfaceFields.capabilities = [
           "Retrieve sourced context",
           "Recall reviewed decisions",
@@ -326,7 +458,7 @@ export function exportDistribution(sourceRoot, destination, project, { desktopOn
       writeFileSync(
         readme,
         "# Snipara for Codex desktop — submission candidate\n\n" +
-          "All three modules are retained. This candidate requires local execution and has no lifecycle hooks. Companion and Orchestrator remain optional programs installed and invoked only on request. Native Snipara OAuth uses the hosted remote MCP; local runtime credentials remain separate. This remote-MCP-plus-local-program combination still requires OpenAI eligibility confirmation; no submission, policy approval or clean-host acceptance is claimed.\n\n" +
+          "All three modules are retained. This candidate requires local execution and has no lifecycle hooks. Companion and Orchestrator remain optional programs installed and invoked only on request. Repository setup adds a regular project-scoped stdio MCP component and uses browser device authorization; local runtime credentials remain separate. This local component still requires OpenAI eligibility confirmation; no submission, policy approval or clean-host acceptance is claimed.\n\n" +
           readFileSync(readme, "utf8")
       );
       assertDesktopPackage(nativeRoot);
@@ -467,10 +599,10 @@ export function exportDistribution(sourceRoot, destination, project, { desktopOn
       licenseScope: listing.licenseScope,
       native: {
         target: desktopOnly ? "codex-desktop" : "native",
-        requiresLocalExecutor: desktopOnly,
-        lifecycleHooks: !desktopOnly,
+        requiresLocalExecutor: true,
+        lifecycleHooks: false,
         project: null,
-        connection: "account",
+        connection: "source",
         modules: config.modules,
         setupRequired: true,
         installedAcceptance: "not-run",
@@ -479,11 +611,11 @@ export function exportDistribution(sourceRoot, destination, project, { desktopOn
           ...(!listing.publisher ? ["Publisher identity not confirmed"] : []),
           ...(!listing.license ? ["Plugin license not confirmed"] : []),
           "Clean native installation and customer project setup acceptance not recorded",
-          "Account MCP/OAuth migration and hosted deployment not verified",
+          "Source-bound native device contract and hosted deployment not verified",
           "Dedicated public repository and installation URL not verified",
           ...(desktopOnly
             ? [
-                "OpenAI desktop eligibility for remote MCP plus local runtimes unverified",
+                "OpenAI desktop eligibility for the local repository component unverified",
                 "Exact desktop package clean installation and main workflows unverified",
               ]
             : []),
@@ -518,7 +650,7 @@ export function exportDistribution(sourceRoot, destination, project, { desktopOn
       join(stage, "README.md"),
       "# Snipara plugin distributions\n\nPrepared version " +
         base.version +
-        "; no publication or official approval claimed.\n\n- native-marketplace/: complete Claude Code/Codex plugin, three independently switchable modules on by default. No project preselected. Native OAuth uses the account MCP; local runtimes need explicit project setup.\n- directory-draft/: hook-free Hosted MCP/context package, account connection by default or an explicit project review fixture. Hosted deployment, fresh native OAuth and the listed review requirements remain gates before public submission.\n- archives/: ZIPs and checksums in distribution-manifest.json.\n\nOnly plugin files are exported. No application repository, credentials, OAuth tokens or engine source is included. Publisher and license are recorded in distribution-manifest.json; see each package's LICENSE and NOTICE for their scope. Remaining publication prerequisites are listed in the manifest. Marketplace registration does not imply directory approval.\n"
+        "; no publication or official approval claimed.\n\n- native-marketplace/: complete Claude Code/Codex plugin, three independently switchable modules on by default. No project preselected. Setup adds a regular project-scoped stdio component with browser authorization; local runtimes require separate explicit project setup.\n- directory-draft/: hook-free Hosted MCP/context package, account connection by default or an explicit project review fixture. Hosted deployment, fresh native OAuth and the listed review requirements remain gates before public submission.\n- archives/: ZIPs and checksums in distribution-manifest.json.\n\nOnly plugin files are exported. No application repository, credentials, OAuth tokens or engine source is included. Publisher and license are recorded in distribution-manifest.json; see each package's LICENSE and NOTICE for their scope. Remaining publication prerequisites are listed in the manifest. Marketplace registration does not imply directory approval.\n"
     );
     json(join(stage, "inventory.json"), inventory(stage));
     if (existsSync(target))

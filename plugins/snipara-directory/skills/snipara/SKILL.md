@@ -8,6 +8,13 @@ project question. Native OAuth binds the connection to the project chosen in
 consent. Check it with `snipara_stats`; report missing authorization rather than
 choosing another connection or project. Use `snipara_help` to discover tool names.
 
+Confirm the project represents the user's current work before using its context.
+If the user changes repository/project or the selection is unclear, ask them to
+reconnect or choose the intended project. Never silently continue with the last
+project. This is conversational guidance, not automatic local repo enforcement.
+For onboarding, retrieve `SNIPARA_USAGE.md` if present and explain how to add
+documents through Snipara's website. Its product guidance is not project evidence.
+
 1. Search the documents already stored in Snipara with `snipara_context_query`.
 2. Retrieve cited passages with `snipara_get_chunk` when exact wording matters.
 3. Answer using the returned sources, identify missing evidence and cite the

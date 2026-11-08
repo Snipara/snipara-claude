@@ -10,12 +10,12 @@
   },
   "publication": {
     "countries": [],
-    "release_notes": "Account OAuth with explicit project selection and sourced project context and memory. The native Claude Code/Codex package also includes independently configurable Companion and Orchestrator modules."
+    "release_notes": "2.2.3: adds a source-bound local connection for native Claude Code and Codex, with explicit browser approval and separate repository/project associations. New source projects receive a usage guide with honest indexing status. The reduced Claude Directory package keeps explicit remote project selection and contains no local hooks or scripts. Companion and Orchestrator retain separate installation, project configuration and authentication requirements."
   },
   "interface": {
     "displayName": "Snipara",
     "shortDescription": "Project context and memory",
-    "longDescription": "Connect your authorized Snipara project to retrieve focused source context and reviewed project memory. Sign in through the assistant's native OAuth flow and explicitly choose one accessible project. Ask questions about your documentation, inspect the cited source sections, and recall reviewed prior decisions. A Snipara account and project access are required. The plugin is free; any Snipara subscription is purchased separately on snipara.com. This directory package provides Hosted MCP and context/memory skills. Local Companion and Orchestrator capabilities are available in the native Claude Code/Codex package from the same source, with all three modules enabled by default and independent off switches. Local runtimes require separate installation and project configuration.",
+    "longDescription": "Connect your authorized Snipara project to retrieve focused source context and reviewed project memory. Sign in through the assistant's native OAuth flow and explicitly choose one accessible project. Ask questions about your documentation, inspect the cited source sections, and recall reviewed prior decisions. A Snipara account and project access are required. The plugin is free; any Snipara subscription is purchased separately on snipara.com. This directory package provides Hosted MCP and context/memory skills. The separate native Claude Code/Codex package connects each repository through a source-bound local component. Optional Companion and Orchestrator capabilities require separate runtime installation, an explicit project profile and independent authentication; the native source connection does not authorize their hosted execution.",
     "category": "Developer Tools",
     "capabilities": ["Retrieve project context", "Read source sections", "Recall reviewed memory"],
     "websiteURL": "https://www.snipara.com",

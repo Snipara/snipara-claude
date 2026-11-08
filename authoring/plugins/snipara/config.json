@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "project": null,
+  "connection": "source",
+  "modules": {
+    "snipara": true,
+    "companion": true,
+    "orchestrator": true
+  }
+}

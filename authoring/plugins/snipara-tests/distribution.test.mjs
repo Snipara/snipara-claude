@@ -55,10 +55,8 @@ test("desktop candidate retains all modules and declares local execution without
   assert.match(portable.review.test_cases.negative[1].description, /Gmail/);
   assert.deepEqual(read(join(root, "review-cases.json")), portable.review.test_cases);
   assert.equal(read(join(root, "config.json")).project, null);
-  assert.deepEqual(read(join(root, "mcp.json")).mcpServers["snipara-plugin"], {
-    type: "streamable-http",
-    url: "https://api.snipara.com/mcp",
-  });
+  assert.deepEqual(read(join(root, "mcp.json")).mcpServers, {});
+  assert.equal(read(join(root, "config.json")).connection, "source");
   const archive = result.archives.find((entry) => entry.variant === "native");
   assert.match(archive.file, /snipara-codex-desktop-/);
   assert.equal(
@@ -90,14 +88,8 @@ test("desktop settings preserve hook-free targeting and explicit module switches
     read(join(result.plugin, ".codex-plugin/plugin.json")).extensions["com.openai"].review,
     m.review
   );
-  assert.deepEqual(read(join(result.plugin, "mcp.json")).mcpServers["snipara-plugin"], {
-    type: "streamable-http",
-    url: "https://api.snipara.com/mcp",
-  });
-  assert.equal(
-    read(join(result.plugin, ".mcp.json")).mcpServers["snipara-plugin"].url,
-    "https://api.snipara.com/mcp"
-  );
+  assert.deepEqual(read(join(result.plugin, "mcp.json")).mcpServers, {});
+  assert.deepEqual(read(join(result.plugin, ".mcp.json")).mcpServers, {});
   buildPlugin(result.plugin, target, applyOptions(config, { orchestrator: "off" }), true);
   assert.equal(existsSync(join(result.plugin, "hooks")), false);
   assert.equal(existsSync(join(result.plugin, "skills/orchestrator")), false);
@@ -111,11 +103,9 @@ test("desktop gate rejects server fields that prevent native MCP loading", (t) =
     const path = join(root, name);
     const original = readFileSync(path, "utf8");
     const mcp = JSON.parse(original);
-    mcp.mcpServers["snipara-plugin"].extensions = {
-      "com.openai": { auth: { type: "oauth", client: { mode: "dcr" } } },
-    };
+    mcp.mcpServers["snipara-plugin"] = { type: "http", url: "https://api.snipara.com/mcp" };
     writeFileSync(path, JSON.stringify(mcp));
-    assert.throws(() => assertDesktopPackage(root), /native-compatible OAuth discovery/);
+    assert.throws(() => assertDesktopPackage(root), /bypassing account MCP/);
     writeFileSync(path, original);
   }
   assertDesktopPackage(root);
@@ -159,7 +149,7 @@ test("customer distribution uses account MCP with no review project preset", (t)
   assertDirectoryPackage(root);
 });
 
-test("native bootstrap has account MCP, all modules and no inherited project execution", (t) => {
+test("native bootstrap has no account bypass, all modules and requires a source connection", (t) => {
   const output = join(fixture(t), "release");
   const result = exportDistribution(source, output, "review-fixture");
   assert.equal(result.output, realpathSync(output));
@@ -172,10 +162,8 @@ test("native bootstrap has account MCP, all modules and no inherited project exe
   const config = read(join(root, "config.json"));
   assert.equal(config.project, null);
   assert.deepEqual(config.modules, { snipara: true, companion: true, orchestrator: true });
-  assert.equal(
-    read(join(root, "mcp.json")).mcpServers["snipara-plugin"].url,
-    "https://api.snipara.com/mcp"
-  );
+  assert.deepEqual(read(join(root, "mcp.json")).mcpServers, {});
+  assert.equal(config.connection, "source");
   const presentation = read(join(root, "plugin.json")).extensions["com.openai"];
   assert.equal(presentation.onboardingSkill, "./skills/settings/SKILL.md");
   assert.ok(presentation.interface.shortDescription.length <= 30);
@@ -196,7 +184,7 @@ test("native bootstrap has account MCP, all modules and no inherited project exe
           return { status: 0, stdout: "3.7.0" };
         },
       }),
-    /Choose your project/
+    /does not authenticate Companion/
   );
   assert.equal(probed, false);
   const setup = spawnSync(

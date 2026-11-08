@@ -2,17 +2,23 @@
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { applyOptions, MODULES, readConfig } from "../lib/config.mjs";
+import { applyOptions, MODULES, readConfig, requireModule } from "../lib/config.mjs";
 import { buildPlugin } from "../lib/build.mjs";
 import { installRuntime, invocation } from "../lib/runtime.mjs";
-import { exportDistribution } from "../lib/distribution.mjs";
+import { exportDistribution, exportClaudeDirectory } from "../lib/distribution.mjs";
+import { readSourceBinding, writeSourceBinding } from "../lib/source-binding.mjs";
+import { setupNativeConnection } from "../lib/native-setup.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const usage = `Snipara plugin: one bundle for Claude Code and Codex
-  build [--connection account|project] [--project <slug-or-id>] [--output <marketplace-directory>]
+  build [--connection account|project|source] [--project <slug-or-id>] [--source-bound on|off] [--output <marketplace-directory>]
+  setup-source --client codex|claude
   export [--project <dedicated-review-slug>] --output <new-distribution-directory>
   export-desktop --output <new-distribution-directory>
-  configure --output <existing-marketplace> [--snipara on|off] [--companion on|off] [--orchestrator on|off] [--project <slug-or-id>] [--connection account|project]
+  export-claude --output <new-distribution-directory>
+  configure --output <existing-marketplace> [--snipara on|off] [--companion on|off] [--orchestrator on|off] [--project <slug-or-id>] [--connection account|project] [--source-bound on|off]
+  bind-source --workspace-id <team-id> --project-id <project-id> --project <slug>
+  source-status
   status
   install companion|orchestrator
   companion <CLI arguments...>
@@ -23,14 +29,14 @@ The credential flag shares only Snipara keys. Native network forwarding is proce
 All three modules default to on. Build/configure never install dependencies or execute tasks.
 After configure, refresh the local plugin installation and restart its client.`;
 
-function options(args) {
+function options(args, allowed = ["project", "connection", "output", "sourceBound", ...MODULES]) {
   const parsed = {};
   for (let index = 0; index < args.length; index += 2) {
     const flag = args[index];
-    const key = flag?.slice(2);
+    const key = ({ "source-bound": "sourceBound", "workspace-id": "workspaceId", "project-id": "projectId" })[flag?.slice(2)] ?? flag?.slice(2);
     if (
       !flag?.startsWith("--") ||
-      !["project", "connection", "output", ...MODULES].includes(key) ||
+      !allowed.includes(key) ||
       parsed[key] !== undefined ||
       args[index + 1] === undefined ||
       args[index + 1].startsWith("--")
@@ -45,9 +51,28 @@ function options(args) {
 try {
   const [action = "help", ...args] = process.argv.slice(2);
   if (["help", "--help", "-h"].includes(action)) console.log(usage);
-  else if (["export", "export-desktop"].includes(action)) {
+  else if (action === "setup-source") {
+    requireModule(readConfig(root), "snipara");
+    const opts = options(args, ["client"]);
+    console.log(JSON.stringify(setupNativeConnection(root, opts.client), null, 2));
+  } else if (action === "bind-source") {
+    const opts = options(args, ["workspaceId", "projectId", "project"]);
+    if (!opts.workspaceId || !opts.projectId || !opts.project)
+      throw new Error("bind-source requires --workspace-id, --project-id and --project; the source is the current workspace.");
+    console.log(JSON.stringify(writeSourceBinding(process.cwd(), {
+      workspaceId: opts.workspaceId, projectId: opts.projectId, projectSlug: opts.project,
+    }), null, 2));
+  } else if (action === "source-status") {
+    if (args.length) throw new Error("source-status takes no arguments and checks only the current workspace.");
+    console.log(JSON.stringify(readSourceBinding(process.cwd()), null, 2));
+  } else if (action === "export-claude") {
+    if (args.length !== 2 || args[0] !== "--output" || !args[1] || args[1].startsWith("--"))
+      throw new Error("Claude Directory export takes only --output <new-directory>.");
+    const opts = options(args, ["output"]);
+    console.log(JSON.stringify(exportClaudeDirectory(root, opts.output), null, 2));
+  } else if (["export", "export-desktop"].includes(action)) {
     const opts = options(args);
-    if (!opts.output || opts.connection || MODULES.some((name) => opts[name] !== undefined))
+    if (!opts.output || opts.connection || opts.sourceBound !== undefined || MODULES.some((name) => opts[name] !== undefined))
       throw new Error(
         "Export needs --output <new-directory>; optional --project creates a bound review fixture. Module switches apply to native profiles."
       );

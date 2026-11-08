@@ -14,6 +14,18 @@ Claude Code connects to the bundled remote MCP declaration; in Claude chat and
 Cowork, open the plugin's Connectors tab and connect Snipara there. Reconnect to
 choose another project. No API key or local credential file is required.
 
+New to Snipara? Use Sign up in the connection page. If you have no project,
+choose Set up my project and connect the repository or folder you work with.
+The personal workspace is created if needed. New setup projects include
+`SNIPARA_USAGE.md`; ask what it says about adding documents once it is indexed.
+Add your own Markdown or text documents from the project's document import
+controls on the Snipara website, or use its supported repository connection.
+Check indexing before asking questions about a new source.
+
+The connection stays on the project you authorize. When you change work, choose
+the corresponding project by reconnecting. This Directory package cannot detect
+your local repository or switch projects automatically.
+
 Try these requests with documents already present in your project:
 
 - Find the documented setup steps for this project and cite the source.

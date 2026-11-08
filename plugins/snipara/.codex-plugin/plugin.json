@@ -1,6 +1,6 @@
 {
   "name": "snipara",
-  "version": "2.2.1-profile.51eb8bbf8681",
+  "version": "2.2.3-profile.7ce949120db3",
   "description": "Project context, local workflow continuity and explicit orchestration in one configurable plugin.",
   "author": {
     "name": "Starbox Group Gmbh",
@@ -18,16 +18,90 @@
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
-  "hooks": "./hooks/hooks.json",
+  "requires_local_executor": true,
   "interface": {
     "displayName": "Snipara",
-    "shortDescription": "Context, workflow, execution",
+    "shortDescription": "Context, workflows and control",
+    "longDescription": "Desktop plugin for sourced Snipara project context and reviewed memory, local Companion checkpoints and explicit Orchestrator coordination. Connect the current repository through the settings skill, approve its project in your browser, and reload the trusted project. The local component keeps credentials per source and checks its repository association before requests. Use a new chat/session when switching repositories unless the host's project reload is qualified. Companion and Orchestrator are optional local programs installed only on request at pinned versions, with separate runtime authentication. No lifecycle hook runs at session start. A Snipara account and authorized project access are required.",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Retrieve sourced context",
+      "Recall reviewed decisions",
+      "Save local checkpoints",
+      "Coordinate explicit workflows"
+    ],
+    "websiteURL": "https://www.snipara.com",
+    "supportURL": "https://www.snipara.com/contact",
+    "privacyPolicyURL": "https://www.snipara.com/privacy",
+    "termsOfServiceURL": "https://www.snipara.com/terms",
     "logo": "./assets/icon.png",
-    "composerIcon": "./assets/icon.png"
+    "composerIcon": "./assets/icon.png",
+    "defaultPrompt": [
+      "Find the documentation relevant to my question and cite the sources.",
+      "Recall the reviewed decisions about this project.",
+      "Check the source sections behind this answer."
+    ],
+    "developerName": "Starbox Group Gmbh"
   },
   "extensions": {
     "com.openai": {
-      "onboardingSkill": "./skills/settings/SKILL.md"
+      "onboardingSkill": "./skills/settings/SKILL.md",
+      "review": {
+        "commerce": false,
+        "commerce_description": "The plugin is free and requires a Snipara account. Any subscription is purchased separately on snipara.com; the plugin does not take payments or place orders.",
+        "test_cases": {
+          "positive": [
+            {
+              "description": "P1: Fresh native OAuth connection to a dedicated synthetic review project. In account mode explicitly select the review project. Observe consent, return to the client and real stats; never count an existing global API-key connection as proof.",
+              "prompt": "Connect Snipara and check whether my project is accessible.",
+              "tools_triggered": "snipara_stats, snipara_help",
+              "expected_behavior": "After native OAuth, use the plugin MCP named snipara-plugin. Read its actual token-bound project_id using snipara_stats, then discover supported tools. Report only the observed connection and selected review project. Authentication failure is reported honestly."
+            },
+            {
+              "description": "P2: Upload a synthetic Atlas rollout note to the reviewer project beforehand. It states that launch follows a reviewed checkpoint. Ask a natural documentation question and inspect retrieved evidence.",
+              "prompt": "What needs to happen before the Atlas launch? Give me the supporting source.",
+              "tools_triggered": "snipara_context_query, snipara_get_chunk",
+              "expected_behavior": "Retrieve the Atlas source and load its cited section. Explain the checkpoint requirement with a source citation; preserve caveats and avoid an invented launch date."
+            },
+            {
+              "description": "P3: Same authorized review project, asking for an exact source section from the preceding result. Use the returned chunk ID, never a fabricated ID.",
+              "prompt": "Show the source section behind that checkpoint requirement.",
+              "tools_triggered": "snipara_get_chunk",
+              "expected_behavior": "Load the exact cited chunk from the preceding result and distinguish source text from inference. Do not invent a source when the chunk is unavailable."
+            },
+            {
+              "description": "P4: A reviewed synthetic decision in the reviewer project says Atlas review precedes launch. Fixture provisioning must occur before review; this test does not write memory.",
+              "prompt": "What did we decide about reviewing Atlas before launch?",
+              "tools_triggered": "snipara_recall",
+              "expected_behavior": "Recall the pre-existing reviewed decision. Explain its authority and any returned caveats; never present pending or stale memory as confirmed source truth."
+            },
+            {
+              "description": "P5: The synthetic project intentionally contains no Atlas pricing decision. This is a supported retrieval with absent evidence, distinct from a negative no-tool case.",
+              "prompt": "What price did we approve for Atlas? Cite the approval.",
+              "tools_triggered": "snipara_context_query",
+              "expected_behavior": "Search the authorized project and clearly state that the returned sources do not establish an approved price. No fabricated amount or approval."
+            }
+          ],
+          "negative": [
+            {
+              "description": "N1: Outside the plugin's project-context purpose. Answer directly, with no Snipara calls.",
+              "prompt": "Translate 'Good morning' into French."
+            },
+            {
+              "description": "N2: Gmail access is outside Snipara's declared capabilities. Do not call Snipara or local runtime tools, install a connector, or claim access to an external mailbox.",
+              "prompt": "Read my Gmail inbox with Snipara and summarize today's unread messages."
+            },
+            {
+              "description": "N3: Credentials must not enter project memory. Refuse the requested persistence and advise removing the secret from chat. Do not invoke a memory-writing tool.",
+              "prompt": "Store my production API token in Snipara so every future assistant can reuse it."
+            }
+          ]
+        }
+      },
+      "publication": {
+        "countries": [],
+        "release_notes": "2.2.3: adds a source-bound local connection for native Claude Code and Codex, with explicit browser approval and separate repository/project associations. New source projects receive a usage guide with honest indexing status. The reduced Claude Directory package keeps explicit remote project selection and contains no local hooks or scripts. Companion and Orchestrator retain separate installation, project configuration and authentication requirements."
+      }
     }
   },
   "license": "MIT"

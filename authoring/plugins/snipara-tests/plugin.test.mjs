@@ -20,7 +20,8 @@ import { buildPlugin } from "../snipara/lib/build.mjs";
 import { installRuntime, invocation, runtimeEnvironment } from "../snipara/lib/runtime.mjs";
 
 const source = resolve(dirname(fileURLToPath(import.meta.url)), "../snipara");
-const defaults = readConfig(source);
+// Legacy explicit remote-profile coverage stays independent of the new native default.
+const defaults = { ...readConfig(source), connection: "account" };
 const read = (path) => JSON.parse(readFileSync(path, "utf8"));
 const fixture = (t) => {
   const root = mkdtempSync(join(tmpdir(), "snipara-plugin-test-"));
@@ -30,7 +31,8 @@ const fixture = (t) => {
 
 test("account profiles use a distinct MCP namespace and keep their OAuth URL when configuring local runtime project and switches", (t) => {
   const output = join(fixture(t), "marketplace");
-  const built = buildPlugin(source, output, defaults);
+  const accountDefaults = { ...defaults, connection: "account" };
+  const built = buildPlugin(source, output, accountDefaults);
   assert.deepEqual(Object.keys(read(join(built.plugin, "mcp.json")).mcpServers), [
     "snipara-plugin",
   ]);
@@ -41,7 +43,7 @@ test("account profiles use a distinct MCP namespace and keep their OAuth URL whe
     read(join(built.plugin, "mcp.json")).mcpServers["snipara-plugin"].url,
     "https://api.snipara.com/mcp"
   );
-  const configured = applyOptions(defaults, { project: "customer-project-id", companion: "off" });
+  const configured = applyOptions(accountDefaults, { project: "customer-project-id", companion: "off" });
   buildPlugin(source, output, configured, true);
   assert.equal(
     read(join(built.plugin, "mcp.json")).mcpServers["snipara-plugin"].url,
@@ -349,4 +351,43 @@ test("pinned package installation does not inherit account or registry secrets",
     },
   });
   assert.equal(calls, 1);
+});
+
+test("native network route is opt-in, loopback-only and separate from credentials", () => {
+  const env = {PATH: "/usr/bin", HOME: "/tmp/test", CODEX_NETWORK_PROXY_ACTIVE: "1",
+    HTTP_PROXY: "http://127.0.0.1:12345", HTTPS_PROXY: "http://[::1]:12345",
+    NODE_USE_ENV_PROXY: "0", NO_PROXY: "*", ALL_PROXY: "http://foreign.invalid:80",
+    SNIPARA_API_KEY: "synthetic-account", OPENAI_API_KEY: "synthetic-provider", NODE_OPTIONS: "--inspect"};
+  assert.equal(runtimeEnvironment(env).HTTP_PROXY, undefined);
+  const routed = runtimeEnvironment(env, false, true);
+  assert.equal(routed.HTTP_PROXY, "http://127.0.0.1:12345/");
+  assert.equal(routed.HTTPS_PROXY, "http://[::1]:12345/");
+  assert.equal(routed.NODE_USE_ENV_PROXY, "1");
+  for (const key of ["NO_PROXY", "ALL_PROXY", "SNIPARA_API_KEY", "OPENAI_API_KEY", "NODE_OPTIONS"])
+    assert.equal(routed[key], undefined);
+  assert.equal(runtimeEnvironment(env, true, true).SNIPARA_API_KEY, "synthetic-account");
+  assert.throws(() => runtimeEnvironment({...env, CODEX_NETWORK_PROXY_ACTIVE: undefined}, false, true), /active Codex/);
+  for (const route of [undefined, "http://foreign.invalid:1234", "https://127.0.0.1:1234", "http://user:secret@127.0.0.1:1234", "http://127.0.0.1:1234/path", "http://127.0.0.1:1234/?key=value", "http://127.0.0.1:1234/#fragment", "http://127.0.0.1"])
+    assert.throws(() => runtimeEnvironment({...env, HTTP_PROXY: route}, false, true), /proxy route/i);
+  assert.throws(() => invocation({...defaults, project:"test"}, "orchestrator", ["--help"], {env, shareNativeNetwork: true}), /Companion only/);
+});
+
+test("CLI composes process-only credential and native route opt-ins in either order", (t) => {
+  const directory = fixture(t);
+  const stub = join(directory, "snipara-companion");
+  writeFileSync(stub, `#!/usr/bin/env node
+if (process.argv[2] === '--version') console.log(${JSON.stringify(VERSIONS.companion)});
+else console.log(JSON.stringify({proxy:process.env.HTTPS_PROXY,nodeProxy:process.env.NODE_USE_ENV_PROXY,key:process.env.SNIPARA_API_KEY,provider:process.env.OPENAI_API_KEY,args:process.argv.slice(2)}));
+`);
+  chmodSync(stub, 0o755);
+  for (const flags of [["--with-native-network"], ["--with-native-network", "--with-snipara-credentials"], ["--with-snipara-credentials", "--with-native-network"]]) {
+    const result = spawnSync(process.execPath, [join(source,"scripts/snipara.mjs"),"companion",...flags,"--help"], {encoding:"utf8",cwd:directory,env:{PATH:directory+":"+dirname(process.execPath),CODEX_NETWORK_PROXY_ACTIVE:"1",HTTP_PROXY:"http://127.0.0.1:12345",HTTPS_PROXY:"http://127.0.0.1:12345",SNIPARA_API_KEY:"synthetic",OPENAI_API_KEY:"excluded"}});
+    assert.equal(result.status,0,result.stderr);
+    const actual=JSON.parse(result.stdout);
+    assert.equal(actual.proxy,"http://127.0.0.1:12345/");
+    assert.equal(actual.nodeProxy,"1");
+    assert.equal(actual.provider,undefined);
+    assert.equal(actual.key, flags.includes("--with-snipara-credentials") ? "synthetic" : undefined);
+    assert.deepEqual(actual.args,["--help"]);
+  }
 });

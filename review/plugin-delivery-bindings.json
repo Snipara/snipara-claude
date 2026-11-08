@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "upstreamSourceCommit": "cdf32eceacb695505567bc314950f9bab7947fff",
+  "upstreamSourceTree": "5609bce575017feb14992e2c4c84d9963fd9c49e",
+  "historicalSavedRunId": "4deed8da4cce425eae6985c34c3b7daf",
+  "historicalQualifiedInputFileCount": 39,
+  "historicalReceiptNotRelabelled": true,
+  "nativeVersion": "2.2.3-profile.7ce949120db3",
+  "claudeDirectoryVersion": "2.2.3",
+  "native": [
+    {
+      "path": ".claude-plugin/plugin.json",
+      "sha256": "d8347f4dcb0bdb18707d57f9e74c89adb403d7a773fd944e9ebadb729ce3f86e",
+      "bytes": 759,
+      "mode": "100644"
+    },
+    {
+      "path": ".codex-plugin/plugin.json",
+      "sha256": "c5f74155942792d0f625f57b2e3f0fe3320a07df065cd9f76fae91e05c176e58",
+      "bytes": 7124,
+      "mode": "100644"
+    },
+    {
+      "path": ".mcp.json",
+      "sha256": "d8e397af03b5b032f21d0aa967086f0c78b33c87b76f2e9898ae0a144df7de02",
+      "bytes": 23,
+      "mode": "100644"
+    },
+    {
+      "path": "DISTRIBUTION.md",
+      "sha256": "c4b173faab90c74527325217ee67514c0158dc00a810ea41cc17b1864d2a62b8",
+      "bytes": 4339,
+      "mode": "100644"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "0b24a484587d05c534b2dd60a2ce3380e90f778f55e83d3a5eadd6278dd32df7",
+      "bytes": 1075,
+      "mode": "100644"
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "7efe043e38dc04522ff02693a1a1cf616d673da5824455113326b26ee537038f",
+      "bytes": 304,
+      "mode": "100644"
+    },
+    {
+      "path": "README.md",
+      "sha256": "65a70f30f82ccd376b29c0f6a3000f9c0efc48013470c95cc20c845f2e8cfb01",
+      "bytes": 7447,
+      "mode": "100644"
+    },
+    {
+      "path": "VERIFICATION.md",
+      "sha256": "be92f41a7958dd60f3b8864fdd158bbd41d85439fe06475126c95221e1c006c2",
+      "bytes": 21260,
+      "mode": "100644"
+    },
+    {
+      "path": "assets/icon.png",
+      "sha256": "04f1d29fe81ba8216cf19967da1f803dc239005dc56f18d96aa26a40fede3aa3",
+      "bytes": 27177,
+      "mode": "100644"
+    },
+    {
+      "path": "catalog/claude-directory/README.md",
+      "sha256": "7a2f9e1b3f0b06f3dc42df2bdf1eb37fc737587e4f5df0dded858b1ca0d97570",
+      "bytes": 3451,
+      "mode": "100644"
+    },
+    {
+      "path": "catalog/claude-directory/connect/SKILL.md",
+      "sha256": "2077cae03ef9f123884ce12490e49932d5e3c811d4d2dc49b177794ed3f65ace",
+      "bytes": 2251,
+      "mode": "100644"
+    },
+    {
+      "path": "catalog/claude-directory/snipara/SKILL.md",
+      "sha256": "a26f54ff541164dbbde08a896c621bf3ae39aa7b5df20b1013ad8167f6fbaa7a",
+      "bytes": 2169,
+      "mode": "100644"
+    },
+    {
+      "path": "catalog/companion/SKILL.md",
+      "sha256": "8e7317a67de067190568758e17e0d844a600df4f8df41ec4e312f5a292e8118b",
+      "bytes": 4779,
+      "mode": "100644"
+    },
+    {
+      "path": "catalog/directory/connect/SKILL.md",
+      "sha256": "5703b1b85fea672f880cbb16d3c75b54840403c5bcbf2f3e3c162e7626aca11f",
+      "bytes": 2319,
+      "mode": "100644"
+    },
+    {
+      "path": "catalog/orchestrator/SKILL.md",
+      "sha256": "d5d96ac6876d49a5cddbf964fe887ce5267c5107283d4606d0ed0a290c516468",
+      "bytes": 4530,
+      "mode": "100644"
+    },
+    {
+      "path": "catalog/settings/SKILL.md",
+      "sha256": "4bb6d1c723f7137fa5891fed2fcfea1de4a5acb0b554ec1c9f27d21b6b472b2a",
+      "bytes": 4942,
+      "mode": "100644"
+    },
+    {
+      "path": "catalog/snipara/SKILL.md",
+      "sha256": "9a6520a89f8f123aa65e052b0b0ae47477ef755f65e1906afe58b54337f78b89",
+      "bytes": 2197,
+      "mode": "100644"
+    },
+    {
+      "path": "config.json",
+      "sha256": "394aa4f5b14d6d52972263dfd9e59489a6d21d7a8539db27f937451cef118ede",
+      "bytes": 159,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/build.mjs",
+      "sha256": "1d26df5ed0a929b892db0bd7d38a9f2e2fa9f90ba5bf18ee0f97e2f6808adfcf",
+      "bytes": 11200,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/config.mjs",
+      "sha256": "55364cbe3072bbce26fc64181267ff39829681c46afc26404cec3f749d25faee",
+      "bytes": 3312,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/distribution.mjs",
+      "sha256": "ab08d118e86708ddb2027489535efa19319d06e23baee50dc0d2d8d6f565fd46",
+      "bytes": 31631,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/native-auth.mjs",
+      "sha256": "d1947678ab995c11f11a81b68b7cc9c1bdaed502592a4442596ba81fd76c0312",
+      "bytes": 4644,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/native-broker.mjs",
+      "sha256": "759e526831b326e2456107ad3f4b79c8af9f5fec3b7ed3f6ef91966485f92990",
+      "bytes": 16844,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/native-credentials.mjs",
+      "sha256": "86f273c1ab5c36acfc45c07f2993588d31713b435231277de6572662f651fee0",
+      "bytes": 5458,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/native-setup.mjs",
+      "sha256": "e6add947d5cd5dd5261494c60bbfaa476caf2c01371ebf82b68afa79aed23c5e",
+      "bytes": 5248,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/runtime.mjs",
+      "sha256": "04751d116a967e67acd3bf9f7a053ee8587e382cc19207791ad0e826c68b9330",
+      "bytes": 19263,
+      "mode": "100644"
+    },
+    {
+      "path": "lib/source-binding.mjs",
+      "sha256": "2462f8b9c163d816a02e2e9af359e4df1485175c193606715ae464e23217a1a2",
+      "bytes": 9821,
+      "mode": "100644"
+    },
+    {
+      "path": "listing.json",
+      "sha256": "57ed9506072711230d2961d4362b7d8f639db07f145cc180ec57b6050095e5c5",
+      "bytes": 2615,
+      "mode": "100644"
+    },
+    {
+      "path": "mcp.json",
+      "sha256": "1788697eb2d3aa1caa8da59a62331a92529e24885f0e7151418f915000fbf7fd",
+      "bytes": 95,
+      "mode": "100644"
+    },
+    {
+      "path": "plugin.json",
+      "sha256": "9cfeeb0ca24f694413ee3fb5cc6c0d0cb6a11ee1de37a5321aa807994612a557",
+      "bytes": 7243,
+      "mode": "100644"
+    },
+    {
+      "path": "review-cases.json",
+      "sha256": "acae402c85f5429d53f70fffde4117d6598394380036abf3c86e50b739f58e04",
+      "bytes": 3621,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/native-mcp.mjs",
+      "sha256": "33380ccf7c833583bb5c180c778622a43dec5d0a469c9fb780576e6b64d88390",
+      "bytes": 2255,
+      "mode": "100644"
+    },
+    {
+      "path": "scripts/snipara.mjs",
+      "sha256": "8bf7e31e35c4e51dd221e3541a301e973f21559a99c3de509b62c979ed683903",
+      "bytes": 7300,
+      "mode": "100644"
+    },
+    {
+      "path": "skills/companion/SKILL.md",
+      "sha256": "8e7317a67de067190568758e17e0d844a600df4f8df41ec4e312f5a292e8118b",
+      "bytes": 4779,
+      "mode": "100644"
+    },
+    {
+      "path": "skills/orchestrator/SKILL.md",
+      "sha256": "d5d96ac6876d49a5cddbf964fe887ce5267c5107283d4606d0ed0a290c516468",
+      "bytes": 4530,
+      "mode": "100644"
+    },
+    {
+      "path": "skills/settings/SKILL.md",
+      "sha256": "4bb6d1c723f7137fa5891fed2fcfea1de4a5acb0b554ec1c9f27d21b6b472b2a",
+      "bytes": 4942,
+      "mode": "100644"
+    },
+    {
+      "path": "skills/snipara/SKILL.md",
+      "sha256": "9a6520a89f8f123aa65e052b0b0ae47477ef755f65e1906afe58b54337f78b89",
+      "bytes": 2197,
+      "mode": "100644"
+    }
+  ],
+  "claudeDirectory": [
+    {
+      "path": ".claude-plugin/plugin.json",
+      "sha256": "bc3779787c482e104f66a2b76725c34e6aecd18b34477844219a479201db35e9",
+      "bytes": 729,
+      "mode": "100644"
+    },
+    {
+      "path": ".mcp.json",
+      "sha256": "7a5df1a3a11277139d7f4c92e902dd14b2784c769bc5545cee47c601371c1543",
+      "bytes": 121,
+      "mode": "100644"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "0b24a484587d05c534b2dd60a2ce3380e90f778f55e83d3a5eadd6278dd32df7",
+      "bytes": 1075,
+      "mode": "100644"
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "7efe043e38dc04522ff02693a1a1cf616d673da5824455113326b26ee537038f",
+      "bytes": 304,
+      "mode": "100644"
+    },
+    {
+      "path": "README.md",
+      "sha256": "7a2f9e1b3f0b06f3dc42df2bdf1eb37fc737587e4f5df0dded858b1ca0d97570",
+      "bytes": 3451,
+      "mode": "100644"
+    },
+    {
+      "path": "assets/icon.png",
+      "sha256": "04f1d29fe81ba8216cf19967da1f803dc239005dc56f18d96aa26a40fede3aa3",
+      "bytes": 27177,
+      "mode": "100644"
+    },
+    {
+      "path": "skills/connect/SKILL.md",
+      "sha256": "2077cae03ef9f123884ce12490e49932d5e3c811d4d2dc49b177794ed3f65ace",
+      "bytes": 2251,
+      "mode": "100644"
+    },
+    {
+      "path": "skills/snipara/SKILL.md",
+      "sha256": "a26f54ff541164dbbde08a896c621bf3ae39aa7b5df20b1013ad8167f6fbaa7a",
+      "bytes": 2169,
+      "mode": "100644"
+    }
+  ],
+  "archives": {
+    "claude-directory": {
+      "archiveSha256": "b77c98f6cc4e6bf774a75f911922c314715091e0d87ba35a8bfc30d969b74650",
+      "archiveBytes": 31480
+    },
+    "native": {
+      "archiveSha256": "ff15c32bd3f9af5b45bde1c03a31e098aa71aa748cf64c48a27a18fa134152ef",
+      "archiveBytes": 109369
+    }
+  },
+  "sourcePublicationDoesNotEstablishPortalApproval": true
+}

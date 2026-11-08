@@ -4,14 +4,18 @@ description: Retrieve sourced project context and reviewed memory through Snipar
 ---
 
 Read this plugin's `../../config.json` first. If `modules.snipara` is not true,
-stop this skill without calling Snipara. Use the plugin's native Hosted MCP
-connection named `snipara-plugin`. In account mode, native OAuth binds it to the project explicitly
-chosen in consent: call `snipara_stats` to observe that project ID, even when
-local `project` is not configured yet. If a local runtime project is configured,
-verify that it matches the returned ID before coordinating local work. Stop on
-mismatch and use settings to reconnect or update the local profile. In project
-mode, configure the explicit project first. Never substitute another global
-connection, environment project or source.
+stop this skill without calling Snipara. For `connection: source`, use only the regular project MCP connection named
+`snipara-repository`. Check its connection status first. If it is absent or
+unconnected, use settings to connect this repository. Never fall back to a direct
+account MCP connection. Repository switching follows the host project/session;
+a shell `cd` alone does not switch the current chat. Use a fresh session on a new
+repository unless that host's project reload is qualified.
+
+For account/project profiles, use `snipara-plugin`. Native OAuth binds it to the
+project explicitly chosen in consent. Call `snipara_stats` to observe the project
+ID and verify it against any configured runtime project. Stop on mismatch and
+reconnect through settings. These remote profiles do not enforce local repository
+identity. Never substitute another global connection, environment project or source.
 
 - Validate with `snipara_help` and discover exact tool names. Empty resources do
   not imply a tool-only MCP server is unavailable.

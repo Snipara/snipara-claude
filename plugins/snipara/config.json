@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "project": null,
-  "connection": "account",
+  "connection": "source",
   "modules": {
     "snipara": true,
     "companion": true,

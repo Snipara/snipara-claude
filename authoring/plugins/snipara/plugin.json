@@ -1,0 +1,15 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "snipara",
+  "version": "2.2.3",
+  "description": "Project context, local workflow continuity and explicit orchestration in one configurable plugin.",
+  "author": {
+    "name": "Starbox Group Gmbh",
+    "url": "https://snipara.com"
+  },
+  "license": "MIT",
+  "icon": "./assets/icon.png",
+  "homepage": "https://snipara.com",
+  "repository": "https://github.com/Snipara/snipara-claude",
+  "keywords": ["context", "memory", "harness", "workflow", "orchestration"]
+}

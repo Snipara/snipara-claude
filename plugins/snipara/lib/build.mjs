@@ -123,7 +123,7 @@ export function buildPlugin(
     const manifest = JSON.parse(readFileSync(join(root, "plugin.json"), "utf8"));
     // A desktop submission must remain hook-free when the installed settings
     // skill builds or configures a project profile later.
-    desktopOnly ||= manifest.extensions?.["com.openai"]?.requires_local_executor === true;
+    desktopOnly ||= config.connection === "source" || manifest.extensions?.["com.openai"]?.requires_local_executor === true;
     const desktopMetadata = desktopOnly ? manifest.extensions?.["com.openai"] : null;
     if (desktopOnly) rmSync(join(root, "scripts", "session-start.sh"), { force: true });
     const baseVersion = manifest.version.replace(/-profile\.[a-f0-9]+$/, "");
@@ -153,7 +153,7 @@ export function buildPlugin(
     json(join(root, "plugin.json"), manifest);
     json(join(root, "config.json"), config);
     // Account OAuth selects each user's project; local runtime setup stays explicit.
-    const url = config.connection === "account" || config.project ? endpoint(config) : null;
+    const url = config.connection === "source" ? null : config.connection === "account" || config.project ? endpoint(config) : null;
     json(join(root, "mcp.json"), {
       $schema: "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
       mcpServers: url

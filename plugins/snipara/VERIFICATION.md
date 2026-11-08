@@ -1,4 +1,49 @@
+# Current native source-profile qualification
+
+The repository-onboarding candidate uses `connection: source`, a skill-only
+native bootstrap and a regular project-scoped stdio broker. Earlier account-MCP
+acceptance records below are historical and do not qualify this component.
+
+Current request/receipt references live in the owning repository's
+`docs/planning/plugin-onboarding-20261107/RESULT.md` and validation packet.
+All executable repository checks require a reviewed standalone Sandbox request,
+immutable source snapshot and prepared dependency image. Do not reinterpret
+historical host commands below as authorization to bypass that gate.
+
+Required native acceptance: exact browser source grant, private credential
+isolation, A→B→A/concurrent source routing, copied config and changed remote
+refusal, current host trust/reload, and a first indexed cited guide answer.
+Pinned host source reads and offline tests do not establish installed-host
+behavior. Use a new chat/session for a new repository unless live project reload
+is qualified for that host/version. Claude Code live project reload requires
+2.1.246 or newer. Optional runtime credentials remain separate; the source
+profile permits their local status/help only.
+
+Native package exports contain no direct remote MCP mapping or lifecycle hooks.
+The reduced Claude Directory remains a separate eight-file remote OAuth artifact.
+No new push, installation, submission, publication or deployment has occurred.
+
+---
+
 # Local plugin verification — 2026-10-11
+
+## Current submission update — 2026-10-25 (2.2.1)
+
+The native archive pins Orchestrator **1.13.1** and Companion **3.9.0**.
+Sandbox **2.4.1** is installed and configured separately, never bundled.
+The OpenAI desktop archive retains all three modules, with no lifecycle hooks,
+no preselected project, and local execution only on explicit request.
+Native network forwarding is process-scoped and opt-in; offline remains default.
+The context-only directory archive contains no Companion or Orchestrator runtime.
+
+Published native installations were qualified in Codex and Claude on 2026-10-25.
+That evidence does not certify a clean installation of either submission ZIP.
+Claude currently shows public commit `ef531f65`, version
+`2.2.1-profile.51eb8bbf8681`, scanned and with a reviewer.
+OpenAI still shows metadata package `2.0.2-profile.47b8cca4fb5e` in review;
+its app version `1.0.0` is a separate version identifier.
+Archive validation, portal upload, review submission and approval are separate.
+The sections below are historical evidence, not current version declarations.
 
 ## Directory hardening follow-up — 2026-10-16
 
