@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import { applyOptions, MODULES, readConfig, requireModule } from "../lib/config.mjs";
 import { buildPlugin } from "../lib/build.mjs";
-import { installRuntime, invocation } from "../lib/runtime.mjs";
+import { installRuntime, invocation, setupLocalWork } from "../lib/runtime.mjs";
 import { exportDistribution, exportClaudeDirectory } from "../lib/distribution.mjs";
 import { readSourceBinding, writeSourceBinding } from "../lib/source-binding.mjs";
 import { setupNativeConnection } from "../lib/native-setup.mjs";
@@ -13,6 +13,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const usage = `Snipara plugin: one bundle for Claude Code and Codex
   build [--connection account|project|source] [--project <slug-or-id>] [--source-bound on|off] [--output <marketplace-directory>]
   setup-source --client codex|claude
+  setup-work --client codex|claude
   export [--project <dedicated-review-slug>] --output <new-distribution-directory>
   export-desktop --output <new-distribution-directory>
   export-claude --output <new-distribution-directory>
@@ -26,7 +27,8 @@ const usage = `Snipara plugin: one bundle for Claude Code and Codex
   companion|orchestrator --with-snipara-credentials <CLI arguments...>
   companion --with-native-network <CLI arguments...>
 The credential flag shares only Snipara keys. Native network forwarding is process-only and requires the host proxy.
-All three modules default to on. Build/configure never install dependencies or execute tasks.
+Connect context with setup-source; enable managed local work with setup-work.
+Module switches are advanced compatibility settings. Build/configure never install dependencies or execute tasks.
 After configure, refresh the local plugin installation and restart its client.`;
 
 function options(args, allowed = ["project", "connection", "output", "sourceBound", ...MODULES]) {
@@ -55,6 +57,9 @@ try {
     requireModule(readConfig(root), "snipara");
     const opts = options(args, ["client"]);
     console.log(JSON.stringify(setupNativeConnection(root, opts.client), null, 2));
+  } else if (action === "setup-work") {
+    const opts = options(args, ["client"]);
+    console.log(JSON.stringify(setupLocalWork(readConfig(root), root, opts.client), null, 2));
   } else if (action === "bind-source") {
     const opts = options(args, ["workspaceId", "projectId", "project"]);
     if (!opts.workspaceId || !opts.projectId || !opts.project)

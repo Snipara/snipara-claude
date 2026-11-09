@@ -62,7 +62,39 @@ Disable an older direct Snipara connection for this profile before using it.
 Independently installed global memory connections have their own scope and must
 not substitute for the repository connection.
 
-## Optional workflow modules
+## Enable local work
+
+When you want to follow a task and verify local changes, ask Snipara settings to
+enable local work. From the actual project, the native setup command is:
+
+```bash
+node /absolute/plugin/scripts/snipara.mjs setup-work --client codex
+# For Claude Code use --client claude.
+```
+
+The existing installer prepares one compatible managed set. You do not need to
+select the three internal components or create a Snipara account. Without a cloud
+connection, local work stays local. An existing authorized repository connection
+is reused for supported cloud operations; preparation preserves it and unrelated
+connections. Reload the trusted project afterwards.
+
+Use `npx --yes snipara-companion@4.2.0 task --help` for the task journey,
+`doctor` for a lightweight diagnostic and `validation --help` for checks.
+The local MCP connection uses the same selected toolchain. Task state and proof
+stay bound to their repository/worktree; a saved running marker is not a live
+worker. New connections select the active bundle; existing sessions stay pinned.
+
+Deterministic local validation needs no Snipara account or model key. Docker is
+needed for isolated repository checks, but preparation does not install Docker,
+download images or run a test/model. Missing capabilities give a next action;
+they do not trigger execution on the host. Hosted context and provider operations
+retain their own authorization. Preparation is not a passing test or activation:
+verify any cloud connection and a cited project answer separately when connected.
+Automatic cloud job synchronization is a separate planned capability; local
+execution must keep working while disconnected. Standalone Companion,
+Orchestrator and Sandbox remain available independently of this managed bundle.
+
+## Advanced standalone workflow modules
 
 All three skill modules are on by default and can be switched independently:
 
@@ -76,7 +108,7 @@ Changing these switches does not stop running tasks or disable independently
 configured project/global servers. Disable a regular project server separately
 when removing repository access. Refresh/restart after profile changes.
 
-Companion 3.9.0 and Orchestrator 1.13.1 remain separately installed programs.
+Companion 4.2.0 and Orchestrator 1.16.0 remain separately available programs.
 No dependency installs or tasks run at session start. The source profile permits
 only their local status/help commands: its browser MCP grant does not authorize
 existing runtime credentials. Hosted/execution work requires a separate explicit

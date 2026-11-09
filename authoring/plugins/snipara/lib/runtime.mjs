@@ -3,6 +3,22 @@ import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { spawnSync } from "node:child_process";
 import { requireModule, VERSIONS } from "./config.mjs";
 import { observeSource, readSourceBinding, SourceBindingError } from "./source-binding.mjs";
+// Local preparation does not require or create a cloud connection. The existing
+// installer preserves an actual repository connection and its authorization.
+export function setupLocalWork(config, pluginRoot, client, {
+  cwd = process.cwd(), env = process.env, execute = spawnSync,
+} = {}) {
+  for (const name of ["companion", "orchestrator"]) requireModule(config, name);
+  if (!["codex", "claude"].includes(client)) throw new Error("Choose --client codex or claude.");
+  const result = execute(process.platform === "win32" ? "npx.cmd" : "npx", [
+    "--yes", "create-snipara@2.2.0", "init", "--profile", "local-work",
+    "--client", client === "claude" ? "claude-code" : "codex",
+  ], { cwd, env: runtimeEnvironment(env), stdio: "inherit", shell: false, timeout: 600000 });
+  if (result.error || result.status !== 0)
+    throw new Error("Local work preparation did not complete. Preserve the existing connection and use create-snipara doctor before retrying.");
+  return { status: "prepared", localWorkPrepared: true, cloudConnectionObserved: false,
+    message: "Reload this trusted project to connect the local tools. Preparation does not prove a live connection or a passing validation." };
+}
 
 const SOURCE_IGNORED = new Set([".git", ".hg", ".next", ".snipara", ".svn", ".turbo", ".venv", "__pycache__", "build", "coverage", "dist", "node_modules", "target", "venv"]);
 const ONBOARD_IGNORED = new Set([".cache", ".git", ".hg", ".next", ".nuxt", ".parcel-cache", ".pnpm-store", ".pytest_cache", ".ruff_cache", ".svn", ".turbo", ".venv", "__pycache__", "build", "coverage", "dist", "node_modules", "out", "target", "venv"]);

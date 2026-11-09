@@ -79,6 +79,8 @@ test("desktop settings preserve hook-free targeting and explicit module switches
   assert.equal(existsSync(join(result.plugin, "skills/orchestrator")), true);
   const m = read(join(result.plugin, "plugin.json")).extensions["com.openai"];
   assert.equal(m.requires_local_executor, true);
+  assert.match(m.interface.longDescription, /Local work needs no Snipara account/);
+  assert.match(m.review.commerce_description, /local work needs no Snipara account/);
   assert.equal(
     m.interface.longDescription,
     read(join(root, "plugin.json")).extensions["com.openai"].interface.longDescription

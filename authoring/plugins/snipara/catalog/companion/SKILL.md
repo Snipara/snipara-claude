@@ -9,6 +9,17 @@ plugin's `../../scripts/snipara.mjs` to an absolute path. Invoke Companion throu
 are checked. If the runtime is absent, show `node <script> install companion`;
 install only when requested. Preserve the current workspace and unrelated edits.
 
+For a prepared managed `local-work` journey, use the shared local facade instead:
+`npx --yes snipara-companion@4.2.0 task <arguments>`, `doctor`, or `validation`.
+The managed manifest selects the compatible peers. Start with `task --help` and
+`doctor`; resume the existing task instead of creating another one. Show the
+shared task reference and evidence-derived progression. Recorded closure is
+historical, not proof of current execution, verification or integration. Local
+inspection and deterministic validation need no account/provider credentials;
+do not hand repository OAuth tokens to this CLI. Hosted operations still require
+their separately configured authorized project. The legacy plugin wrapper below
+retains its restricted source-profile behavior and independent module switches.
+
 Before hosted or execution work in account mode with Snipara on, call
 `snipara_stats` on this plugin's MCP connection and compare its `project_id`
 to the explicit local profile `project`. Stop on missing configuration,

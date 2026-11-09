@@ -421,7 +421,11 @@ export function exportDistribution(sourceRoot, destination, project, { desktopOn
         const interfaceFields = { ...listing.interface, developerName: listing.publisher };
         interfaceFields.shortDescription = "Context, workflows and control";
         interfaceFields.longDescription =
-          "Desktop plugin for sourced Snipara project context and reviewed memory, local Companion checkpoints and explicit Orchestrator coordination. Connect the current repository through the settings skill, approve its project in your browser, and reload the trusted project. The local component keeps credentials per source and checks its repository association before requests. Use a new chat/session when switching repositories unless the host's project reload is qualified. Companion and Orchestrator are optional local programs installed only on request at pinned versions, with separate runtime authentication. No lifecycle hook runs at session start. A Snipara account and authorized project access are required.";
+          "Choose project context or local work in your coding assistant. Local work needs no Snipara account: prepare compatible local tools for tasks, checkpoints and isolated checks. The components also remain available independently. Hosted context and reviewed memory use an optional authorized Snipara project connection. Its local component keeps credentials per source and checks the repository association before requests. Use a new chat/session when switching repositories unless the host's project reload is qualified. Preparation does not launch jobs, call a model or import repository files. No lifecycle hook runs at session start.";
+        const nativeReview = { ...listing.review, test_cases: desktopCases,
+          commerce_description: "The plugin and local setup are free; local work needs no Snipara account. Hosted context requires authorized project access. Optional Hosted subscriptions are purchased separately on snipara.com; the plugin takes no payments or orders." };
+        const nativePublication = { ...listing.publication,
+          release_notes: "Adds a managed account-free local-work setup alongside source-bound Hosted context. Existing connections and independent component usage are preserved. Automatic cloud job reporting and remote control remain planned capabilities." };
         interfaceFields.capabilities = [
           "Retrieve sourced context",
           "Recall reviewed decisions",
@@ -431,8 +435,8 @@ export function exportDistribution(sourceRoot, destination, project, { desktopOn
         if (name === "plugin.json")
           Object.assign(manifest.extensions["com.openai"], {
             interface: interfaceFields,
-            review: { ...listing.review, test_cases: desktopCases },
-            publication: listing.publication,
+            review: nativeReview,
+            publication: nativePublication,
           });
         if (name === ".codex-plugin/plugin.json")
           Object.assign(manifest, {
@@ -441,11 +445,8 @@ export function exportDistribution(sourceRoot, destination, project, { desktopOn
               ...manifest.extensions,
               "com.openai": {
                 ...manifest.extensions?.["com.openai"],
-                review: {
-                  ...listing.review,
-                  test_cases: desktopCases,
-                },
-                publication: listing.publication,
+                review: nativeReview,
+                publication: nativePublication,
               },
             },
           });
@@ -458,7 +459,7 @@ export function exportDistribution(sourceRoot, destination, project, { desktopOn
       writeFileSync(
         readme,
         "# Snipara for Codex desktop — submission candidate\n\n" +
-          "All three modules are retained. This candidate requires local execution and has no lifecycle hooks. Companion and Orchestrator remain optional programs installed and invoked only on request. Repository setup adds a regular project-scoped stdio MCP component and uses browser device authorization; local runtime credentials remain separate. This local component still requires OpenAI eligibility confirmation; no submission, policy approval or clean-host acceptance is claimed.\n\n" +
+          "Choose context or local work. Local work needs no Snipara account; Hosted context uses an optional authorized source connection. Components remain independently available, and preparation starts no job or model. This candidate requires local execution and has no lifecycle hooks. The local component still requires OpenAI eligibility confirmation; no submission, policy approval or clean-host acceptance is claimed.\n\n" +
           readFileSync(readme, "utf8")
       );
       assertDesktopPackage(nativeRoot);

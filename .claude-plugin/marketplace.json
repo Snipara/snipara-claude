@@ -12,7 +12,7 @@
       "name": "snipara",
       "source": "./plugins/snipara",
       "description": "Project context, local workflow continuity and explicit orchestration in one configurable plugin.",
-      "version": "2.2.3-profile.7ce949120db3"
+      "version": "2.3.0-profile.a7e95dd39c42"
     }
   ]
 }

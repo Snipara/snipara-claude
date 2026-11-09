@@ -17,7 +17,7 @@ import { spawnSync } from "node:child_process";
 import test from "node:test";
 import { applyOptions, MODULES, readConfig, validateConfig, VERSIONS } from "../snipara/lib/config.mjs";
 import { buildPlugin } from "../snipara/lib/build.mjs";
-import { installRuntime, invocation, runtimeEnvironment } from "../snipara/lib/runtime.mjs";
+import { installRuntime, invocation, runtimeEnvironment, setupLocalWork } from "../snipara/lib/runtime.mjs";
 
 const source = resolve(dirname(fileURLToPath(import.meta.url)), "../snipara");
 // Legacy explicit remote-profile coverage stays independent of the new native default.
@@ -28,6 +28,41 @@ const fixture = (t) => {
   t.after(() => rmSync(root, { recursive: true, force: true }));
   return root;
 };
+
+test("managed native preparation needs no cloud connection and forwards no credentials", () => {
+  const calls = [];
+  const cwd = "/projects/actual-repository";
+  const result = setupLocalWork(defaults, source, "claude", {
+    cwd, env: { PATH: "/usr/bin", HOME: "/private/home", OPENAI_API_KEY: "unshared", RLM_API_KEY: "unshared", NODE_OPTIONS: "unshared" },
+    execute: (command, args, options) => {
+      calls.push(command);
+      assert.deepEqual(args, ["--yes", "create-snipara@2.2.0", "init", "--profile", "local-work", "--client", "claude-code"]);
+      assert.equal(command, process.platform === "win32" ? "npx.cmd" : "npx");
+      assert.equal(options.cwd, cwd);
+      assert.deepEqual(options.env, { PATH: "/usr/bin", HOME: "/private/home" });
+      assert.equal(options.shell, false);
+      assert.equal(options.timeout, 600000);
+      return { status: 0 };
+    },
+  });
+  assert.equal(result.localWorkPrepared, true);
+  assert.equal(result.cloudConnectionObserved, false);
+  assert.equal(calls.length, 1);
+});
+
+test("managed preparation preserves local component opt-outs and works with cloud disabled", () => {
+  const execute = () => { throw new Error("must not install"); };
+  for (const name of ["companion", "orchestrator"]) {
+    const config = { ...defaults, modules: { ...defaults.modules, [name]: false } };
+    assert.throws(() => setupLocalWork(config, source, "codex", { execute }), /is off/);
+  }
+  assert.throws(() => setupLocalWork(defaults, source, "other", { execute }), /Choose/);
+  const local = { ...defaults, modules: { ...defaults.modules, snipara: false } };
+  assert.equal(setupLocalWork(local, source, "codex", { execute: () => ({ status: 0 }) }).localWorkPrepared, true);
+  assert.throws(() => setupLocalWork(defaults, source, "codex", {
+    execute: () => ({ status: 1 }),
+  }), /did not complete/);
+});
 
 test("account profiles use a distinct MCP namespace and keep their OAuth URL when configuring local runtime project and switches", (t) => {
   const output = join(fixture(t), "marketplace");

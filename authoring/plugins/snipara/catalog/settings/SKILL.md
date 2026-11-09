@@ -1,11 +1,28 @@
 ---
 name: settings
-description: Connect the current repository to Snipara and configure optional local workflow modules. Use only when the user requests setup or a settings change.
+description: Connect repository context or enable managed local work in Snipara. Use only when the user requests setup or a settings change.
 disable-model-invocation: true
 ---
 
 Resolve `../../scripts/snipara.mjs` relative to this skill to an absolute path.
 Read `../../config.json`; preserve module switches the user did not change.
+
+## Choose the requested journey
+
+For project knowledge and memory, follow the repository connection below. It
+does not require local workflow packages or Docker. When the user requests local
+work and validation, use `node <absolute-script> setup-work --client codex` or
+`--client claude` from the actual project. This delegates to `create-snipara`'s
+`local-work` preparation without requiring a cloud connection, account or login.
+An existing repository connection and its private authorization are preserved.
+
+Local preparation selects compatible components together; do not ask the user
+to choose Companion, Orchestrator and Sandbox individually. It does not install
+Docker, download images, call a model, run tests or grant project access. Respect
+existing disabled local modules; an explicit opt-out must be changed deliberately.
+Disabling the cloud/context module does not prevent independent local work.
+Reload this trusted project after preparation. A saved configuration does not
+establish that the new MCP connection is live.
 
 ## Repository connection (connection: source)
 
@@ -49,7 +66,30 @@ changed repository remote must fail the source check. Losing the local associati
 requires explicit browser selection again; a matching folder name is insufficient.
 The browser source label expresses local intent, not proof of filesystem ownership.
 
-## Optional local workflows
+## Managed local work
+
+After preparation, use the existing Companion interface for local tasks,
+continuation, diagnostics and validation: `npx --yes snipara-companion@4.2.0`
+followed by `task`, `doctor` or `validation` and their documented arguments.
+The managed selection supplies compatible execution and verification peers;
+the user does not supply their paths or invent a validation scope. Use `--help`
+before unfamiliar operations. Inspection alone must not start a worker/container.
+
+The local `snipara-local` MCP connection supplies isolated validation; an existing
+`snipara-repository` connection supplies authorized project context. Local
+validation needs no Snipara account or model key. Browser repository consent
+does not authenticate Hosted workflow operations or a model provider. Keep those
+separate capabilities explicit and preserve failures without a host/raw fallback.
+Use the current source connection automatically when its live authorized status
+permits the requested cloud operation. Otherwise continue local work. Configuration
+alone, an inherited global key or a matching folder name does not prove access.
+Automatic cloud job synchronization is planned separately; do not claim it exists
+from this local setup. A cloud disconnect must never relaunch a local job.
+Task references and receipts remain workspace-bound. On a repository change,
+open the appropriate project/session; never borrow another repository's task,
+project association or saved proof.
+
+## Advanced standalone compatibility
 
 Companion and Orchestrator are separate installed programs with their own runtime
 credentials. Browser authorization for the repository MCP does not authenticate
