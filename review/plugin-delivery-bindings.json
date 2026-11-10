@@ -1,24 +1,24 @@
 {
   "schemaVersion": 1,
   "sourceCandidate": {
-    "baseCommit": "660b0d47cbf9b2f406bacad2b9bd4d20e358ddd7",
-    "sourceFilesSha256": "6ce7b10717f834d7cfd906e03741cb5aaa12fef3e4ba7d63005035a13d504639",
-    "committedAtPreparation": false
+    "baseCommit": "a2bb45e3631be61e655717e0b6788ac91077dc2d",
+    "sourceFilesSha256": "68e4feba2545eb8741657b624e08e4aa60e5f6d953df642d84c0c00589f72a47",
+    "committedAtPreparation": true
   },
   "evidenceBoundary": "This inventory binds delivered bytes; separate exact qualification and pilot records control publication. No historical receipt is reused as current proof.",
-  "nativeVersion": "2.3.0-profile.a7e95dd39c42",
-  "claudeDirectoryVersion": "2.2.3",
+  "nativeVersion": "2.3.0-profile.1cf122f79b21",
+  "claudeDirectoryVersion": "2.2.4",
   "native": [
     {
       "path": ".claude-plugin/plugin.json",
       "bytes": 759,
-      "sha256": "63d1859687fc4c42492a4e5156a3e26a2609f96e05605480021b3ca34aba4483",
+      "sha256": "17a2cab045f9a3b57bb39d0136ffc1e686688958b01a1c19394749f402fd10c5",
       "mode": "100644"
     },
     {
       "path": ".codex-plugin/plugin.json",
       "bytes": 6899,
-      "sha256": "7c8e7b89db9ae013ae2ec6e2285122fab0ecb6b922ffc01cfd62fd47cd3812ed",
+      "sha256": "f2f06c78a2b25dd141d6d78c93d7a13c4385fb220c9c6cbf53208dae288eb5c9",
       "mode": "100644"
     },
     {
@@ -77,8 +77,8 @@
     },
     {
       "path": "catalog/claude-directory/snipara/SKILL.md",
-      "bytes": 2169,
-      "sha256": "a26f54ff541164dbbde08a896c621bf3ae39aa7b5df20b1013ad8167f6fbaa7a",
+      "bytes": 4254,
+      "sha256": "fb15c0d2270159ade08d3b8c3e8b5a7e4e6e1cf4f6af14b647b886f6630eb7fe",
       "mode": "100644"
     },
     {
@@ -107,8 +107,8 @@
     },
     {
       "path": "catalog/snipara/SKILL.md",
-      "bytes": 2197,
-      "sha256": "9a6520a89f8f123aa65e052b0b0ae47477ef755f65e1906afe58b54337f78b89",
+      "bytes": 4855,
+      "sha256": "02dd18f5ba7d069d22ba9ed5eccf3ccf15419b9da1d069dcb6821ea9da861433",
       "mode": "100644"
     },
     {
@@ -132,7 +132,7 @@
     {
       "path": "lib/distribution.mjs",
       "bytes": 32035,
-      "sha256": "1b5c60506f4f50068874ed69c9fb2def0dd2758f738629d1758e87f698a5d1e4",
+      "sha256": "9aa9bdc9b917b70eb8dc18db139e345733ec3aec324f25fc90db4cb9f4e4af30",
       "mode": "100644"
     },
     {
@@ -173,8 +173,8 @@
     },
     {
       "path": "listing.json",
-      "bytes": 2615,
-      "sha256": "57ed9506072711230d2961d4362b7d8f639db07f145cc180ec57b6050095e5c5",
+      "bytes": 2563,
+      "sha256": "c17d62593f52ec6c7c1b0ca6e2444e0475eeda6ea43d61e504d3ee7a7e229ef9",
       "mode": "100644"
     },
     {
@@ -186,7 +186,7 @@
     {
       "path": "plugin.json",
       "bytes": 7018,
-      "sha256": "9053d4746f444901bfde0dda427d2f17718b7a83dd41d8a63aa1ab297c33d021",
+      "sha256": "63a98949852495cb0d23e67d0fe26d56fc695c0c2282ddb5a74b3d93b58c5518",
       "mode": "100644"
     },
     {
@@ -227,8 +227,8 @@
     },
     {
       "path": "skills/snipara/SKILL.md",
-      "bytes": 2197,
-      "sha256": "9a6520a89f8f123aa65e052b0b0ae47477ef755f65e1906afe58b54337f78b89",
+      "bytes": 4855,
+      "sha256": "02dd18f5ba7d069d22ba9ed5eccf3ccf15419b9da1d069dcb6821ea9da861433",
       "mode": "100644"
     }
   ],
@@ -236,7 +236,7 @@
     {
       "path": ".claude-plugin/plugin.json",
       "bytes": 729,
-      "sha256": "bc3779787c482e104f66a2b76725c34e6aecd18b34477844219a479201db35e9",
+      "sha256": "1c669123a607b238f6241f8347055f2eafaecd0002b7f9ec3e79af90e9e6dd62",
       "mode": "100644"
     },
     {
@@ -277,19 +277,19 @@
     },
     {
       "path": "skills/snipara/SKILL.md",
-      "bytes": 2169,
-      "sha256": "a26f54ff541164dbbde08a896c621bf3ae39aa7b5df20b1013ad8167f6fbaa7a",
+      "bytes": 4254,
+      "sha256": "fb15c0d2270159ade08d3b8c3e8b5a7e4e6e1cf4f6af14b647b886f6630eb7fe",
       "mode": "100644"
     }
   ],
   "archives": {
     "native": {
-      "archiveSha256": "8cd91cdc5fcf08498991ac11504c5d0f34360bd328e3b1318cdb34560f3dd80c",
-      "archiveBytes": 112885
+      "archiveSha256": "766e15961126352f21e58c0f9fc2a7fbf5b6a8827b5026eee06454eb532c9683",
+      "archiveBytes": 116185
     },
     "claude-directory": {
-      "archiveSha256": "a5268513f59bd065cb75cd04e1eca0a5de818fcc6eb39bb4bace652bfc4682cc",
-      "archiveBytes": 31480
+      "archiveSha256": "36ae78af273305f8d5bbcbb2b398a2e7d3001835adc35c646c00d01820be1142",
+      "archiveBytes": 32427
     }
   },
   "sourcePublicationDoesNotEstablishPortalApproval": true

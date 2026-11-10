@@ -10,7 +10,7 @@
   },
   "publication": {
     "countries": [],
-    "release_notes": "2.2.3: adds a source-bound local connection for native Claude Code and Codex, with explicit browser approval and separate repository/project associations. New source projects receive a usage guide with honest indexing status. The reduced Claude Directory package keeps explicit remote project selection and contains no local hooks or scripts. Companion and Orchestrator retain separate installation, project configuration and authentication requirements."
+    "release_notes": "2.2.4: clarifies procedural retrieval with English source terms, exact cited passages, bounded recovery and visible evidence gaps. Preserves retirement notices, scope and prerequisites, and separates historical evidence from current verification and execution permission. The reduced Claude Directory package remains retrieval-only, with explicit remote project selection and no local hooks or scripts."
   },
   "interface": {
     "displayName": "Snipara",

@@ -32,7 +32,7 @@ installed plugin's `scripts/snipara.mjs setup-work --client codex` (use
 `--client claude` for Claude Code). It delegates to the pinned installer:
 
 ```sh
-npx --yes create-snipara@2.2.0 init --profile local-work --client codex
+npx --yes create-snipara@2.2.2 init --profile local-work --client codex
 ```
 
 The compatible local tools are prepared together. Signup, a Hosted project and
@@ -72,8 +72,8 @@ context connection does not grant remote launch or cancellation authority.
 
 | Path | Purpose |
 | --- | --- |
-| `plugins/snipara` | Native `2.3.0-profile.a7e95dd39c42`; exactly 37 files, no lifecycle hooks |
-| `plugins/snipara-directory` | Claude Directory 2.2.3; exactly eight files, remote context/OAuth only |
+| `plugins/snipara` | Native `2.3.0-profile.1cf122f79b21`; exactly 37 files, no lifecycle hooks |
+| `plugins/snipara-directory` | Claude Directory 2.2.4; exactly eight files, remote context/OAuth only |
 | `authoring/plugins` | Authoring source and regression tests; never a Directory scan root |
 
 For Claude Directory, select only `plugins/snipara-directory`. The remote package

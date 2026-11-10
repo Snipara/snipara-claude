@@ -32,3 +32,37 @@ or start background capture as a side effect of a question.
 There are no local executables, hooks, installers, Companion or Orchestrator in
 this package. Do not install or run them to complete a request. Report unavailable
 capabilities, stale sources or authentication failures without inventing results.
+
+## Answer a procedural question
+
+Use English retrieval terms for maintained English sources. Preserve exact entity
+names, client identifiers, file paths and versions; do not translate identifiers.
+For a multi-part task, supply two to four neutral `retrieval_queries` facets with
+the original `query`, within one `max_tokens` budget. Describe mechanisms and
+constraints without assuming a source proves the requested capability.
+
+Read exact cited chunks before giving commands or applying a procedure. Preserve
+parent retirement notices, canonical replacements, scope, missing prerequisites
+and negative constraints. A recent date, high relevance/quality score or accepted
+journal write does not establish current factual authority. Historical sources
+can answer explicitly historical questions when their status remains visible.
+
+After one weak or slow query, retry once with three to eight distinctive terms,
+`search_mode="keyword"`, `max_tokens=800`, `return_references=true`,
+`auto_decompose=false` and `include_all_tiers=false`. Stop recovery after that
+attempt and state any evidence gap. Local code inspection, when available, owns
+uncommitted behavior; it does not repair hosted indexing or freshness by itself.
+
+Require source support for the exact requested subject. Generic Snipara hosting
+cannot identify an unknown customer's server, owner or backup destination. State
+which client-specific evidence is missing. Keep proposals separate from adopted
+decisions, continuity separate from reviewed reusable claims, and historical
+receipts separate from checks actually run against the current source identity.
+
+Answer with the applicable sourced procedure, unresolved inputs and the actual
+verification observed. If no check ran, say so. Do not turn a suggested action,
+AnswerPack draft, saved receipt or returned source into execution permission.
+
+This directory profile remains retrieval-only: report a requested memory
+correction as requiring an authorized write-capable surface. Do not save or
+change memory through this profile, including as a side effect of evaluation.

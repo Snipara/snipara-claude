@@ -20,7 +20,7 @@ import { MCP_SERVER_NAME, readConfig, validateConfig } from "./config.mjs";
 
 const json = (path, value) => writeFileSync(path, JSON.stringify(value, null, 2) + "\n");
 const sha = (bytes) => createHash("sha256").update(bytes).digest("hex");
-export const CLAUDE_DIRECTORY_VERSION = "2.2.3";
+export const CLAUDE_DIRECTORY_VERSION = "2.2.4";
 const CLAUDE_DIRECTORY_FILES = [
   ".claude-plugin/plugin.json",
   ".mcp.json",
