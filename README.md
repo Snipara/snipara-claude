@@ -72,7 +72,7 @@ context connection does not grant remote launch or cancellation authority.
 
 | Path | Purpose |
 | --- | --- |
-| `plugins/snipara` | Native `2.3.0-profile.1cf122f79b21`; exactly 37 files, no lifecycle hooks |
+| `plugins/snipara` | Native `2.3.0-profile.abbfc4f7683c`; exactly 37 files, no lifecycle hooks |
 | `plugins/snipara-directory` | Claude Directory 2.2.4; exactly eight files, remote context/OAuth only |
 | `authoring/plugins` | Authoring source and regression tests; never a Directory scan root |
 

@@ -69,7 +69,7 @@ The browser source label expresses local intent, not proof of filesystem ownersh
 ## Managed local work
 
 After preparation, use the existing Companion interface for local tasks,
-continuation, diagnostics and validation: `npx --yes snipara-companion@4.2.0`
+continuation, diagnostics and validation: `npx --yes snipara-companion@5.1.7`
 followed by `task`, `doctor` or `validation` and their documented arguments.
 The managed selection supplies compatible execution and verification peers;
 the user does not supply their paths or invent a validation scope. Use `--help`

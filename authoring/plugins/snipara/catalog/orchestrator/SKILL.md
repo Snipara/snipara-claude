@@ -29,11 +29,11 @@ hosted check. With Snipara off, follow the restricted local-only behavior below.
 5. Capture execution receipts and review/proof evidence. Treat native execution,
    independent acceptance and live customer-path proof as separate outcomes.
 
-Hosted htask operations require account/project credentials and the hosted
+Hosted operations require account/project credentials and the hosted
 service. Plugin OAuth does not provision CLI credentials. With Snipara off, do
-not invoke hosted queues or context; this version permits `status --json`,
+not invoke hosted context; this version permits `status --json`,
 help and version only.
-Keep htask coordination here, not on Companion. Report unavailable capabilities
+Keep orchestration here, not on Companion. Report unavailable capabilities
 or missing proof without weakening an existing gate. Never fabricate credentials,
 approval, acceptance, runtime continuation or billing measurements.
 

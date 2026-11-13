@@ -78,7 +78,7 @@ connection, local work stays local. An existing authorized repository connection
 is reused for supported cloud operations; preparation preserves it and unrelated
 connections. Reload the trusted project afterwards.
 
-Use `npx --yes snipara-companion@4.2.0 task --help` for the task journey,
+Use `npx --yes snipara-companion@5.1.7 task --help` for the task journey,
 `doctor` for a lightweight diagnostic and `validation --help` for checks.
 The local MCP connection uses the same selected toolchain. Task state and proof
 stay bound to their repository/worktree; a saved running marker is not a live
@@ -108,7 +108,7 @@ Changing these switches does not stop running tasks or disable independently
 configured project/global servers. Disable a regular project server separately
 when removing repository access. Refresh/restart after profile changes.
 
-Companion 4.2.0 and Orchestrator 1.16.0 remain separately available programs.
+Companion 5.1.7 and Orchestrator 2.0.0 remain separately available programs.
 No dependency installs or tasks run at session start. The source profile permits
 only their local status/help commands: its browser MCP grant does not authorize
 existing runtime credentials. Hosted/execution work requires a separate explicit

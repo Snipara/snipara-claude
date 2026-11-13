@@ -10,7 +10,7 @@ are checked. If the runtime is absent, show `node <script> install companion`;
 install only when requested. Preserve the current workspace and unrelated edits.
 
 For a prepared managed `local-work` journey, use the shared local facade instead:
-`npx --yes snipara-companion@4.2.0 task <arguments>`, `doctor`, or `validation`.
+`npx --yes snipara-companion@5.1.7 task <arguments>`, `doctor`, or `validation`.
 The managed manifest selects the compatible peers. Start with `task --help` and
 `doctor`; resume the existing task instead of creating another one. Show the
 shared task reference and evidence-derived progression. Recorded closure is
@@ -58,7 +58,7 @@ ask for or print key values; do not forward unrelated provider credentials.
 
 Checkpoint continuity requires the project folder, `.snipara` state and referenced
 files/artifacts. It does not migrate a live agent process. Use Orchestrator for
-explicit htask queues, controller execution and production proof coordination.
+controller execution and production proof coordination.
 
 Before repository tests or executable validation, use the module's `validation gate`
 with a Sandbox request and explicit workflow/lot scope. Probe required capabilities,

@@ -273,7 +273,7 @@ test("Snipara off rejects hosted work before even probing dependencies", () => {
     ["query", "private context"],
     ["workflow", "start"],
     ["workflow", "status", "--unexpected"],
-    ["htask", "next"],
+    ["team-sync", "status"],
   ]) {
     assert.throws(() => invocation(config, "companion", args, { probe }), /Snipara is off/);
   }
