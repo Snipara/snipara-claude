@@ -53,8 +53,8 @@
     },
     {
       "path": "VERIFICATION.md",
-      "bytes": 21260,
-      "sha256": "be92f41a7958dd60f3b8864fdd158bbd41d85439fe06475126c95221e1c006c2",
+      "bytes": 22139,
+      "sha256": "f06b0b9094fdad4770a44c44efb96dce0835c94553b2be3501547d9441680531",
       "mode": "100644"
     },
     {
@@ -77,8 +77,8 @@
     },
     {
       "path": "catalog/claude-directory/snipara/SKILL.md",
-      "bytes": 4254,
-      "sha256": "fb15c0d2270159ade08d3b8c3e8b5a7e4e6e1cf4f6af14b647b886f6630eb7fe",
+      "bytes": 4240,
+      "sha256": "c0942ba701a08118ffae29b633423458df0f51ef01b74c6116bc2d91e08ab863",
       "mode": "100644"
     },
     {
@@ -89,8 +89,8 @@
     },
     {
       "path": "catalog/directory/connect/SKILL.md",
-      "bytes": 2319,
-      "sha256": "5703b1b85fea672f880cbb16d3c75b54840403c5bcbf2f3e3c162e7626aca11f",
+      "bytes": 2305,
+      "sha256": "42563ea03fc581627e5ee3afbee6eaca23092bf12e540b74c5bfba8e5ebc508a",
       "mode": "100644"
     },
     {
@@ -265,8 +265,8 @@
     },
     {
       "path": "skills/snipara/SKILL.md",
-      "bytes": 4254,
-      "sha256": "fb15c0d2270159ade08d3b8c3e8b5a7e4e6e1cf4f6af14b647b886f6630eb7fe",
+      "bytes": 4240,
+      "sha256": "c0942ba701a08118ffae29b633423458df0f51ef01b74c6116bc2d91e08ab863",
       "mode": "100644"
     }
   ],

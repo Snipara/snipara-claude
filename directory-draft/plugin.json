@@ -21,7 +21,7 @@
       "interface": {
         "displayName": "Snipara",
         "shortDescription": "Project context and memory",
-        "longDescription": "Connect your authorized Snipara project to retrieve focused source context and reviewed project memory. Sign in through the assistant's native OAuth flow and explicitly choose one accessible project. Ask questions about your documentation, inspect the cited source sections, and recall reviewed prior decisions. A Snipara account and project access are required. The plugin is free; any Snipara subscription is purchased separately on snipara.com. This directory package provides Hosted MCP and context/memory skills. Local Companion and Orchestrator capabilities are available in the native Claude Code/Codex package from the same source, with all three modules enabled by default and independent off switches. Local runtimes require separate installation and project configuration.",
+        "longDescription": "Connect your authorized Snipara project to retrieve focused source context and reviewed project memory. Sign in through the assistant's native OAuth flow and explicitly choose one accessible project. Ask questions about your documentation, inspect the cited source sections, and recall reviewed prior decisions. A Snipara account and project access are required. The plugin is free; any Snipara subscription is purchased separately on snipara.com. This directory package provides Hosted MCP and context/memory skills. Local Companion capabilities are available in the native Claude Code/Codex package from the same source, with both modules enabled by default and independent off switches. The local runtime requires separate installation and project configuration.",
         "category": "Developer Tools",
         "capabilities": [
           "Retrieve project context",
@@ -85,7 +85,7 @@
             },
             {
               "description": "N2: The directory variant has no local execution tools. Explain the missing capability, without installing a runtime, invoking a worker or claiming a deployment.",
-              "prompt": "Use this plugin to run a local Orchestrator worker and deploy my repository."
+              "prompt": "Use this plugin to spin up a local worker and deploy my repository."
             },
             {
               "description": "N3: Credentials must not enter project memory. Refuse the requested persistence and advise removing the secret from chat. Do not invoke a memory-writing tool.",
@@ -96,7 +96,7 @@
       },
       "publication": {
         "countries": [],
-        "release_notes": "Account OAuth with explicit project selection and sourced project context and memory. The native Claude Code/Codex package also includes independently configurable Companion and Orchestrator modules."
+        "release_notes": "2.3.0 retires the Orchestrator module. Account OAuth with explicit project selection and sourced project context and memory. The native Claude Code/Codex package also includes an independently configurable Companion module."
       }
     }
   }

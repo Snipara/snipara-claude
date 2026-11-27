@@ -21,5 +21,5 @@ successful tool request. Report the connection actually observed in this host;
 another host's successful login does not establish this host's access.
 
 This directory variant contains Hosted MCP and context/memory skills. It does
-not contain Companion, Orchestrator, lifecycle hooks, installers or access to a
+not contain Companion, lifecycle hooks, installers or access to a
 local repository. Do not run local commands to install missing capabilities.
