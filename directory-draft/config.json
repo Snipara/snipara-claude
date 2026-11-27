@@ -4,7 +4,6 @@
   "connection": "account",
   "modules": {
     "snipara": true,
-    "companion": false,
-    "orchestrator": false
+    "companion": false
   }
 }

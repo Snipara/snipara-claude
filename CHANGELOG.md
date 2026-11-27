@@ -1,3 +1,10 @@
+# 2.3.0 — 2026-11-27
+
+- Retire the **Orchestrator** module. `catalog/orchestrator/`, `skills/orchestrator/`, the Python venv runtime adapter and the pinned `snipara-orchestrator==1.13.1` installer are removed. The CLI no longer accepts `install orchestrator`, the `orchestrator <args>` verb, or `configure --orchestrator on|off`.
+- `validateConfig` now reads an older profile carrying `"orchestrator"` in `modules` and drops the switch (backward compatible); only `snipara` and `companion` remain.
+- Plugin description, keywords, `shortDescription`, marketplace description, directory-draft, review fixtures, VERIFICATION, DISTRIBUTION, README and MIGRATION updated accordingly. Review case N2 no longer names Orchestrator.
+- `connection: "source"` and the account-free local-work setup from the earlier 2.3 line remain unchanged.
+
 # 2.0.0 — 2026-10-12
 
 ## 2.1.1
