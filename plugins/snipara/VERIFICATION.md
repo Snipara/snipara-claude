@@ -1,3 +1,18 @@
+# Orchestrator removal — 2026-11-27 (2.3.0)
+
+The Orchestrator module is retired. `validateConfig` reads and drops any
+`"orchestrator"` switch from an older profile; `invocation`, `installRuntime`,
+`install orchestrator`, the `orchestrator <args>` verb and
+`configure --orchestrator on|off` are gone. `catalog/orchestrator/` and
+`skills/orchestrator/` are removed from source. The native archive now pins
+only Companion **3.9.0**; the Python venv runtime and the pinned
+`snipara-orchestrator==1.13.1` installer are deleted. `plugin.json` keywords
+drop `orchestration`; `shortDescription` and marketplace description no longer
+mention control or execution. Backward compat is covered by
+`authoring/plugins/snipara-tests/runtime-pin.test.mjs` and
+`plugin.test.mjs`. Historical sections below describe earlier Orchestrator
+pins and acceptance that no longer apply to this plugin.
+
 # Current native source-profile qualification
 
 The repository-onboarding candidate uses `connection: source`, a skill-only

@@ -29,7 +29,7 @@ and do not send them to Snipara. Do not save conversation content, user profiles
 or automatic session memories. This skill performs retrieval; do not make writes
 or start background capture as a side effect of a question.
 
-There are no local executables, hooks, installers, Companion or Orchestrator in
+There are no local executables, hooks, installers or Companion in
 this package. Do not install or run them to complete a request. Report unavailable
 capabilities, stale sources or authentication failures without inventing results.
 

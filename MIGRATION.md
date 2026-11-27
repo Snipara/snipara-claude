@@ -3,7 +3,9 @@
 The marketplace remains `snipara-plugins`, and the Claude plugin remains
 `snipara@snipara-plugins`. Its source now points to `plugins/snipara`.
 Version 2 replaces the old commands/RLM Runtime integration with four skills:
-`snipara`, `companion`, `orchestrator`, and `settings`.
+`snipara`, `companion`, `orchestrator`, and `settings`. From 2.3.0 the
+`orchestrator` skill is retired; profiles carrying `"orchestrator"` in
+`modules` are still accepted and the switch is dropped silently.
 
 Update the marketplace and plugin, then restart Claude Code:
 
@@ -22,9 +24,10 @@ Do not enable the old root plugin and the new nested plugin together. Existing
 legacy sources remain in this Git history and checkout for reference, but the
 marketplace loads only the new nested package.
 
-All three modules default to on. Local engines are separately installed and pinned;
-OAuth does not copy their credentials or launch a controller. Configure local runtime
-project alignment through the settings skill before hosted/execution commands.
+Both modules default to on. The local Companion engine is separately installed
+and pinned; OAuth does not copy its credentials or launch a worker. Configure
+local runtime project alignment through the settings skill before hosted
+commands.
 
 If you installed the previous local development marketplace named `snipara`, disable
 that copy when installing from the public Claude marketplace to avoid duplicate skills.
