@@ -4,7 +4,6 @@
   "connection": "source",
   "modules": {
     "snipara": true,
-    "companion": true,
-    "orchestrator": true
+    "companion": true
   }
 }

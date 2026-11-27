@@ -329,11 +329,10 @@ export function assertDesktopPackage(root) {
     config.project !== null ||
     config.connection !== "source" ||
     !config.modules.snipara ||
-    !config.modules.companion ||
-    !config.modules.orchestrator
+    !config.modules.companion
   )
     throw new Error("Full desktop submission must retain all modules without a preset project.");
-  for (const name of ["snipara", "settings", "companion", "orchestrator"])
+  for (const name of ["snipara", "settings", "companion"])
     if (!names.includes(`skills/${name}/SKILL.md`))
       throw new Error("Missing desktop skill: " + name);
   for (const name of ["mcp.json", ".mcp.json"]) {
@@ -521,7 +520,7 @@ export function exportDistribution(sourceRoot, destination, project, { desktopOn
     json(join(directory, "plugin.json"), base);
     json(join(directory, "config.json"), {
       ...config,
-      modules: { snipara: true, companion: false, orchestrator: false },
+      modules: { snipara: true, companion: false },
     });
     const url = project ? "https://api.snipara.com/mcp/" + project : "https://api.snipara.com/mcp";
     json(join(directory, "mcp.json"), {
@@ -558,7 +557,7 @@ export function exportDistribution(sourceRoot, destination, project, { desktopOn
       join(directory, "README.md"),
       "# Snipara directory draft\n\nVersion " +
         base.version +
-        ". Hosted MCP and source context/memory skills only. Companion, Orchestrator, installers and lifecycle hooks are excluded.\n\n**Review draft, not submitted or published.** Connection: " +
+        ". Hosted MCP and source context/memory skills only. Companion, installers and lifecycle hooks are excluded.\n\n**Review draft, not submitted or published.** Connection: " +
         (project ? "review project " + project : "account MCP with explicit project selection") +
         ". Account-mode drafts select a project in native OAuth; the optional project URL is a dedicated review fixture. The eight reviewer cases, recording, reviewer access and portal checks must be completed before official submission.\n\n[Website](" +
         interfaceFields.websiteURL +
@@ -627,7 +626,7 @@ export function exportDistribution(sourceRoot, destination, project, { desktopOn
         scope: project ? "project-bound-review-draft" : "account-project-selection-draft",
         submitted: false,
         readyToSubmit: false,
-        modules: { snipara: true, companion: false, orchestrator: false },
+        modules: { snipara: true, companion: false },
         blockers: [
           ...(!listing.publisher ? ["Publisher identity not confirmed"] : []),
           ...(!listing.license ? ["Plugin license not confirmed"] : []),

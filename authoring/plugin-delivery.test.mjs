@@ -17,10 +17,10 @@ function fixture(t) {
   return root;
 }
 const check = cwd => spawnSync(process.execPath, [".github/scripts/check-plugin.mjs"], { cwd, encoding: "utf8", timeout: 10000 });
-test("public delivery accepts the exact separately qualified native37 and Claude8 payloads", t => {
+test("public delivery accepts the exact separately qualified native35 and Claude8 payloads", t => {
   const result = check(fixture(t));
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /Exact native37 and isolated Claude Directory8/);
+  assert.match(result.stdout, /Exact native35 and isolated Claude Directory8/);
 });
 test("public delivery refuses a script in the Claude scan root even if added to its inventory", t => {
   const root = fixture(t), path = "unrequested.mjs", body = "export const synthetic = true;\n";

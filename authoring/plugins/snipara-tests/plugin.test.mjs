@@ -36,7 +36,7 @@ test("managed native preparation needs no cloud connection and forwards no crede
     cwd, env: { PATH: "/usr/bin", HOME: "/private/home", OPENAI_API_KEY: "unshared", RLM_API_KEY: "unshared", NODE_OPTIONS: "unshared" },
     execute: (command, args, options) => {
       calls.push(command);
-      assert.deepEqual(args, ["--yes", "create-snipara@2.2.0", "init", "--profile", "local-work", "--client", "claude-code"]);
+      assert.deepEqual(args, ["--yes", "create-snipara@3.1.4", "init", "--profile", "local-work", "--client", "claude-code"]);
       assert.equal(command, process.platform === "win32" ? "npx.cmd" : "npx");
       assert.equal(options.cwd, cwd);
       assert.deepEqual(options.env, { PATH: "/usr/bin", HOME: "/private/home" });
@@ -52,10 +52,8 @@ test("managed native preparation needs no cloud connection and forwards no crede
 
 test("managed preparation preserves local component opt-outs and works with cloud disabled", () => {
   const execute = () => { throw new Error("must not install"); };
-  for (const name of ["companion", "orchestrator"]) {
-    const config = { ...defaults, modules: { ...defaults.modules, [name]: false } };
-    assert.throws(() => setupLocalWork(config, source, "codex", { execute }), /is off/);
-  }
+  const off = { ...defaults, modules: { ...defaults.modules, companion: false } };
+  assert.throws(() => setupLocalWork(off, source, "codex", { execute }), /is off/);
   assert.throws(() => setupLocalWork(defaults, source, "other", { execute }), /Choose/);
   const local = { ...defaults, modules: { ...defaults.modules, snipara: false } };
   assert.equal(setupLocalWork(local, source, "codex", { execute: () => ({ status: 0 }) }).localWorkPrepared, true);
@@ -92,7 +90,7 @@ test("account profiles use a distinct MCP namespace and keep their OAuth URL whe
   assert.throws(() => applyOptions(defaults, { connection: "unknown" }), /Connection/);
 });
 
-for (let mask = 0; mask < 8; mask++) {
+for (let mask = 0; mask < 1 << MODULES.length; mask++) {
   test(`native profile ${mask}: registration, skills and runtime switches agree`, (t) => {
     const config = {
       ...defaults,
@@ -149,7 +147,7 @@ for (let mask = 0; mask < 8; mask++) {
       assert.match(hook.stdout, /configured project and module switches/);
       assert.ok(hook.stdout.includes(JSON.stringify(config, null, 2)));
     } else assert.deepEqual(hooks, {});
-    for (const name of ["companion", "orchestrator"]) {
+    for (const name of ["companion"]) {
       let probed = false;
       const probe = () => {
         probed = true;
@@ -181,20 +179,20 @@ test("configure preserves other modules and can run from its own generated bundl
       "configure",
       "--output",
       output,
-      "--orchestrator",
+      "--companion",
       "off",
     ],
     { encoding: "utf8" }
   );
   assert.equal(result.status, 0, result.stderr);
   const next = readConfig(built.plugin);
-  assert.deepEqual(next.modules, { snipara: true, companion: true, orchestrator: false });
+  assert.deepEqual(next.modules, { snipara: true, companion: false });
   assert.equal(next.project, "my-project");
-  assert.equal(existsSync(join(built.plugin, "skills/orchestrator")), false);
+  assert.equal(existsSync(join(built.plugin, "skills/companion")), false);
   assert.notEqual(read(join(built.plugin, "plugin.json")).version, originalVersion);
-  const enabled = applyOptions(next, { orchestrator: "on" });
+  const enabled = applyOptions(next, { companion: "on" });
   buildPlugin(source, output, enabled, true);
-  assert.equal(existsSync(join(built.plugin, "skills/orchestrator/SKILL.md")), true);
+  assert.equal(existsSync(join(built.plugin, "skills/companion/SKILL.md")), true);
   assert.equal(read(join(built.plugin, "plugin.json")).version, originalVersion);
 });
 
@@ -255,10 +253,14 @@ test("runtime keeps arguments literal and rejects stale or missing dependencies"
   );
   assert.throws(
     () =>
-      invocation(config, "orchestrator", args, {
+      invocation(config, "companion", args, {
         probe: () => ({ error: new Error("not installed") }),
       }),
     /Install the pinned/
+  );
+  assert.throws(
+    () => invocation(config, "orchestrator", args, { probe: () => assert.fail("must not probe") }),
+    /orchestrator is off/
   );
 });
 
@@ -277,10 +279,6 @@ test("Snipara off rejects hosted work before even probing dependencies", () => {
   ]) {
     assert.throws(() => invocation(config, "companion", args, { probe }), /Snipara is off/);
   }
-  assert.throws(
-    () => invocation(config, "orchestrator", ["controller", "run", "--execute"], { probe }),
-    /Snipara is off/
-  );
   assert.equal(calls, 0);
   const local = invocation(config, "companion", ["workflow", "status", "--json"], { probe });
   assert.equal(local.options.shell, false);
@@ -404,7 +402,6 @@ test("native network route is opt-in, loopback-only and separate from credential
   assert.throws(() => runtimeEnvironment({...env, CODEX_NETWORK_PROXY_ACTIVE: undefined}, false, true), /active Codex/);
   for (const route of [undefined, "http://foreign.invalid:1234", "https://127.0.0.1:1234", "http://user:secret@127.0.0.1:1234", "http://127.0.0.1:1234/path", "http://127.0.0.1:1234/?key=value", "http://127.0.0.1:1234/#fragment", "http://127.0.0.1"])
     assert.throws(() => runtimeEnvironment({...env, HTTP_PROXY: route}, false, true), /proxy route/i);
-  assert.throws(() => invocation({...defaults, project:"test"}, "orchestrator", ["--help"], {env, shareNativeNetwork: true}), /Companion only/);
 });
 
 test("CLI composes process-only credential and native route opt-ins in either order", (t) => {

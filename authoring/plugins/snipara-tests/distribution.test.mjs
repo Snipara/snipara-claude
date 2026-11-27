@@ -76,7 +76,8 @@ test("desktop settings preserve hook-free targeting and explicit module switches
   const result = buildPlugin(root, target, config);
   assert.equal(existsSync(join(result.plugin, "hooks")), false);
   assert.equal(existsSync(join(result.plugin, "skills/companion")), false);
-  assert.equal(existsSync(join(result.plugin, "skills/orchestrator")), true);
+  assert.equal(existsSync(join(result.plugin, "skills/orchestrator")), false);
+  assert.equal(existsSync(join(result.plugin, "skills/snipara")), true);
   const m = read(join(result.plugin, "plugin.json")).extensions["com.openai"];
   assert.equal(m.requires_local_executor, true);
   assert.match(m.interface.longDescription, /Local work needs no Snipara account/);
@@ -92,9 +93,9 @@ test("desktop settings preserve hook-free targeting and explicit module switches
   );
   assert.deepEqual(read(join(result.plugin, "mcp.json")).mcpServers, {});
   assert.deepEqual(read(join(result.plugin, ".mcp.json")).mcpServers, {});
-  buildPlugin(result.plugin, target, applyOptions(config, { orchestrator: "off" }), true);
+  buildPlugin(result.plugin, target, applyOptions(config, { snipara: "off" }), true);
   assert.equal(existsSync(join(result.plugin, "hooks")), false);
-  assert.equal(existsSync(join(result.plugin, "skills/orchestrator")), false);
+  assert.equal(existsSync(join(result.plugin, "skills/snipara")), false);
 });
 
 test("desktop gate rejects server fields that prevent native MCP loading", (t) => {
@@ -163,7 +164,7 @@ test("native bootstrap has no account bypass, all modules and requires a source 
     assert.ok(existsSync(join(output, "native-marketplace/plugins/snipara-tests", name)));
   const config = read(join(root, "config.json"));
   assert.equal(config.project, null);
-  assert.deepEqual(config.modules, { snipara: true, companion: true, orchestrator: true });
+  assert.deepEqual(config.modules, { snipara: true, companion: true });
   assert.deepEqual(read(join(root, "mcp.json")).mcpServers, {});
   assert.equal(config.connection, "source");
   const presentation = read(join(root, "plugin.json")).extensions["com.openai"];
@@ -172,7 +173,6 @@ test("native bootstrap has no account bypass, all modules and requires a source 
   assert.equal(presentation.interface.logo, "./assets/icon.png");
   assert.deepEqual(readdirSync(join(root, "skills")).sort(), [
     "companion",
-    "orchestrator",
     "settings",
     "snipara",
   ]);

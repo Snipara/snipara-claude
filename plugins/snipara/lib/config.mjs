@@ -1,10 +1,10 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export const MODULES = ["snipara", "companion", "orchestrator"];
+export const MODULES = ["snipara", "companion"];
 // Native hosts merge plugin servers with existing user MCP registrations.
 export const MCP_SERVER_NAME = "snipara-plugin";
-export const VERSIONS = { companion: "5.1.7", orchestrator: "2.0.0" };
+export const VERSIONS = { companion: "9.3.0" };
 
 function object(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -33,17 +33,21 @@ export function validateConfig(value, requireProject = false) {
   ) {
     throw new Error("Project must be a Snipara project slug, not a URL or credential.");
   }
+  // Orchestrator is retired. A profile written before its removal still carries the
+  // switch: it is read and dropped, never a reason to refuse the profile.
+  const { orchestrator: retired, ...modules } = object(value.modules) ? value.modules : {};
   if (
     !object(value.modules) ||
-    Object.keys(value.modules).length !== MODULES.length ||
-    MODULES.some((name) => typeof value.modules[name] !== "boolean")
+    (retired !== undefined && typeof retired !== "boolean") ||
+    Object.keys(modules).length !== MODULES.length ||
+    MODULES.some((name) => typeof modules[name] !== "boolean")
   ) {
-    throw new Error("Each of snipara, companion and orchestrator must be a boolean.");
+    throw new Error("Each of snipara and companion must be a boolean.");
   }
   if (requireProject && value.modules.snipara && connection !== "source" && (connection === "project" || value.sourceBound) && !value.project) {
     throw new Error("Choose a project with --project <slug> when Snipara is on.");
   }
-  return structuredClone({ ...value, connection });
+  return structuredClone({ ...value, connection, modules });
 }
 
 export function readConfig(root, requireProject = false) {

@@ -17,7 +17,7 @@ work and validation, use `node <absolute-script> setup-work --client codex` or
 An existing repository connection and its private authorization are preserved.
 
 Local preparation selects compatible components together; do not ask the user
-to choose Companion, Orchestrator and Sandbox individually. It does not install
+to choose Companion and Sandbox individually. It does not install
 Docker, download images, call a model, run tests or grant project access. Respect
 existing disabled local modules; an explicit opt-out must be changed deliberately.
 Disabling the cloud/context module does not prevent independent local work.
@@ -69,7 +69,7 @@ The browser source label expresses local intent, not proof of filesystem ownersh
 ## Managed local work
 
 After preparation, use the existing Companion interface for local tasks,
-continuation, diagnostics and validation: `npx --yes snipara-companion@5.1.7`
+continuation, diagnostics and validation: `npx --yes snipara-companion@9.3.0`
 followed by `task`, `doctor` or `validation` and their documented arguments.
 The managed selection supplies compatible execution and verification peers;
 the user does not supply their paths or invent a validation scope. Use `--help`
@@ -91,17 +91,17 @@ project association or saved proof.
 
 ## Advanced standalone compatibility
 
-Companion and Orchestrator are separate installed programs with their own runtime
+Companion is a separate installed program with its own runtime
 credentials. Browser authorization for the repository MCP does not authenticate
-those programs. Install them only when requested with
-`node <script> install companion` or `install orchestrator`. Do not install or
-launch tasks at session start. The source profile permits only their local status/help commands. Hosted or
+it. Install it only when requested with
+`node <script> install companion`. Do not install or
+launch tasks at session start. The source profile permits only its local status/help commands. Hosted or
 execution work requires a separately configured explicit-project runtime profile
 and its own authentication; the repository MCP grant cannot authorize it.
 
 For module switches, use `configure --output <owned-marketplace>` with
-`--snipara on|off`, `--companion on|off` or `--orchestrator on|off`, preserving
-other switches. If the owned marketplace is unknown, ask; do not edit an
+`--snipara on|off` or `--companion on|off`, preserving
+the other switch. If the owned marketplace is unknown, ask; do not edit an
 installed cache. Refresh the plugin and restart after changes. The Snipara off
 switch removes this plugin's bundled registration; an already configured regular
 project server has a separate lifecycle and must also be disabled explicitly.

@@ -17,14 +17,13 @@ const usage = `Snipara plugin: one bundle for Claude Code and Codex
   export [--project <dedicated-review-slug>] --output <new-distribution-directory>
   export-desktop --output <new-distribution-directory>
   export-claude --output <new-distribution-directory>
-  configure --output <existing-marketplace> [--snipara on|off] [--companion on|off] [--orchestrator on|off] [--project <slug-or-id>] [--connection account|project] [--source-bound on|off]
+  configure --output <existing-marketplace> [--snipara on|off] [--companion on|off] [--project <slug-or-id>] [--connection account|project] [--source-bound on|off]
   bind-source --workspace-id <team-id> --project-id <project-id> --project <slug>
   source-status
   status
-  install companion|orchestrator
+  install companion
   companion <CLI arguments...>
-  orchestrator <CLI arguments...>
-  companion|orchestrator --with-snipara-credentials <CLI arguments...>
+  companion --with-snipara-credentials <CLI arguments...>
   companion --with-native-network <CLI arguments...>
 The credential flag shares only Snipara keys. Native network forwarding is process-only and requires the host proxy.
 Connect context with setup-source; enable managed local work with setup-work.
@@ -118,13 +117,13 @@ try {
         `Snipara plugin — ${MODULES.map((name) => `${name}: ${config.modules[name] ? "on" : "off"}`).join(", ")}. Project: ${config.project || "not configured"}.`
       );
       console.log(
-        "Use the enabled plugin skills. Orchestration and memory writes require an explicit task; preserve evidence and existing authorization."
+        "Use the enabled plugin skills. Memory writes require an explicit task; preserve evidence and existing authorization."
       );
     }
   } else if (action === "install") {
     if (args.length !== 1) throw new Error("Install takes exactly one module name.");
     installRuntime(readConfig(root), args[0]);
-  } else if (["companion", "orchestrator"].includes(action)) {
+  } else if (action === "companion") {
     const flags = new Set();
     while (["--with-snipara-credentials", "--with-native-network"].includes(args[0])) {
       const flag = args.shift();

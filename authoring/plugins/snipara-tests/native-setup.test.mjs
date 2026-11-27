@@ -91,11 +91,11 @@ test("a public source binding cannot authorize optional runtimes in source profi
   const { cwd } = fixture(t);
   writeSourceBinding(cwd, { projectId: "project-forged", projectSlug: "forged", workspaceId: "workspace-forged" });
   const config = { schemaVersion: 1, connection: "source", project: null,
-    modules: { snipara: true, companion: true, orchestrator: true } };
+    modules: { snipara: true, companion: true } };
   let probed = false;
-  for (const [name, args] of [["companion", ["workflow", "start"]], ["orchestrator", ["run"]]])
+  for (const [name, args] of [["companion", ["workflow", "start"]]])
     assert.throws(() => invocation(config, name, args, { cwd,
       env: { RLM_API_KEY: "must-not-forward", SNIPARA_PROJECT: "project-forged" },
-      shareSniparaCredentials: true, probe: () => { probed = true; return { status: 0 }; } }), /does not authenticate Companion or Orchestrator/);
+      shareSniparaCredentials: true, probe: () => { probed = true; return { status: 0 }; } }), /does not authenticate Companion\./);
   assert.equal(probed, false);
 });

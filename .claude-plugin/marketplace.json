@@ -5,14 +5,14 @@
     "email": "hello@snipara.com"
   },
   "metadata": {
-    "description": "Snipara project context, Companion workflows and optional Orchestrator execution."
+    "description": "Snipara project context and Companion workflows."
   },
   "plugins": [
     {
       "name": "snipara",
       "source": "./plugins/snipara",
-      "description": "Project context, local workflow continuity and explicit orchestration in one configurable plugin.",
-      "version": "2.3.0-profile.abbfc4f7683c"
+      "description": "Project context and local workflow continuity in one configurable plugin.",
+      "version": "2.3.0-profile.3e41e11ad061"
     }
   ]
 }

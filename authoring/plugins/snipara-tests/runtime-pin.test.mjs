@@ -4,8 +4,8 @@ import {mkdtempSync,mkdirSync,writeFileSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {invocation,installRuntime} from '../snipara/lib/runtime.mjs';
-import {VERSIONS} from '../snipara/lib/config.mjs';
-const config={schemaVersion:1,project:'fixture',connection:'project',modules:{snipara:true,companion:true,orchestrator:true}};
+import {VERSIONS,validateConfig} from '../snipara/lib/config.mjs';
+const config={schemaVersion:1,project:'fixture',connection:'project',modules:{snipara:true,companion:true}};
 test('Companion installer and launcher select the reviewed package',t=>{
  const data=mkdtempSync(join(tmpdir(),'plugin-pin-'));t.after(()=>rmSync(data,{recursive:true,force:true}));
  const calls=[];
@@ -27,15 +27,10 @@ for(const version of ['3.7.0','3.7.1','3.7.2','3.7.3','3.7.4','3.8.0',VERSIONS.c
  });
 }
 
-for (const version of ['1.10.0','1.11.0','1.11.1','1.12.0','1.13.0',VERSIONS.orchestrator]) {
- test(`Orchestrator private runtime ${version} obeys the exact pin`, t => {
-  const data=mkdtempSync(join(tmpdir(),'plugin-orchestrator-pin-'));t.after(()=>rmSync(data,{recursive:true,force:true}));
-  const local=join(data,'orchestrator',process.platform==='win32'?'Scripts':'bin',process.platform==='win32'?'snipara-orchestrator.exe':'snipara-orchestrator');
-  mkdirSync(join(data,'orchestrator',process.platform==='win32'?'Scripts':'bin'),{recursive:true});writeFileSync(local,'fixture');
-  const calls=[];
-  const options={env:{PATH:process.env.PATH,PLUGIN_DATA:data},probe:(command,args)=>{calls.push({command,args});return{status:0,stdout:version};}};
-  if(version===VERSIONS.orchestrator)assert.equal(invocation(config,'orchestrator',['--version'],options).command,local);
-  else assert.throws(()=>invocation(config,'orchestrator',['--version'],options),/Install the pinned orchestrator/);
-  assert.deepEqual(calls,[{command:local,args:['--version']}]);
- });
-}
+test('Orchestrator is retired: no launcher, no pin, and an old profile switch is dropped', () => {
+ assert.equal(VERSIONS.orchestrator, undefined);
+ assert.deepEqual(validateConfig({...config,modules:{...config.modules,orchestrator:true}}).modules,{snipara:true,companion:true});
+ assert.throws(()=>validateConfig({...config,modules:{...config.modules,orchestrator:'on'}}),/must be a boolean/);
+ assert.throws(()=>invocation(config,'orchestrator',['--version'],{probe:()=>assert.fail('must not probe')}),/orchestrator is off/);
+ assert.throws(()=>installRuntime(config,'orchestrator',{execute:()=>assert.fail('must not install')}),/orchestrator is off/);
+});

@@ -1,7 +1,7 @@
 {
   "name": "snipara",
-  "version": "2.3.0-profile.abbfc4f7683c",
-  "description": "Project context, local workflow continuity and explicit orchestration in one configurable plugin.",
+  "version": "2.3.0-profile.3e41e11ad061",
+  "description": "Project context and local workflow continuity in one configurable plugin.",
   "author": {
     "name": "Starbox Group Gmbh",
     "url": "https://snipara.com"
@@ -13,8 +13,7 @@
     "context",
     "memory",
     "harness",
-    "workflow",
-    "orchestration"
+    "workflow"
   ],
   "privacyPolicyUrl": "https://www.snipara.com/privacy",
   "supportUrl": "https://www.snipara.com/contact",

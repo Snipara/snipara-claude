@@ -64,8 +64,7 @@ Publication occurs separately after review approval.
 Normal installed Claude Code 2.1.100 and Codex 0.162.0-alpha.2 produced sourced answers
 through their plugin MCP, with real source chunks. These tests used the publisher's
 Snipara documentation project, not the dedicated Atlas reviewer account.
-Companion 3.7.0 preserved a local workflow checkpoint between processes. Orchestrator
-1.9.0 initialized and reconciled an observe-mode controller without worker dispatch.
-Packaging checks cover all eight module combinations. Native refresh and revoked/
+Companion 3.7.0 preserved a local workflow checkpoint between processes.
+Packaging checks cover all four module combinations. Native refresh and revoked/
 downgraded access acceptance, the eight Atlas host cases, recording, portal domain/
 identity verification and scans remain pending. No official listing is claimed.

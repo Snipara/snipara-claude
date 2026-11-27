@@ -1,24 +1,24 @@
 {
   "schemaVersion": 1,
   "sourceCandidate": {
-    "baseCommit": "1e0c820db5bd2e9ee2846bb6c351a8d07645a0c6",
-    "sourceFilesSha256": "2255ba864e27899ca457da9a77a50872f3b75c80dbe15b449949497dc3990309",
+    "baseCommit": "9b254e6f79684fc763c78a2a1b7bec00832f9c53",
+    "sourceFilesSha256": "e57f652a67da76e3906f860bb70ada22c6eb77437381f0d0dee2ea0dde7af223",
     "committedAtPreparation": true
   },
   "evidenceBoundary": "This inventory binds delivered bytes; separate exact qualification and pilot records control publication. No historical receipt is reused as current proof.",
-  "nativeVersion": "2.3.0-profile.abbfc4f7683c",
+  "nativeVersion": "2.3.0-profile.3e41e11ad061",
   "claudeDirectoryVersion": "2.2.4",
   "native": [
     {
       "path": ".claude-plugin/plugin.json",
-      "bytes": 759,
-      "sha256": "1ad0dd81527d8ee860ecf04ed38c9b3046273bae078b6aad9e4d1a32c59431ff",
+      "bytes": 714,
+      "sha256": "0ac1ebc62e9ef5fe6d871d5a0b075295767ac0a071bc1042642eb9a976ea9979",
       "mode": "100644"
     },
     {
       "path": ".codex-plugin/plugin.json",
-      "bytes": 6899,
-      "sha256": "801c1b916ba0b7ae81c6ab3ce27031bd26b34d7682da27ec381d61e41eddb1f8",
+      "bytes": 6854,
+      "sha256": "e32d753d8c8acc771560efd4bce40f5175f5317a899200a8e00372d22ec57f2c",
       "mode": "100644"
     },
     {
@@ -29,8 +29,8 @@
     },
     {
       "path": "DISTRIBUTION.md",
-      "bytes": 4339,
-      "sha256": "c4b173faab90c74527325217ee67514c0158dc00a810ea41cc17b1864d2a62b8",
+      "bytes": 4315,
+      "sha256": "5c575d68339ace8d58a6e31d7a580bf5179f0567fd8fe91d2233454b8c527b2d",
       "mode": "100644"
     },
     {
@@ -47,8 +47,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 9167,
-      "sha256": "0a50704c4a2bfabf45902df950d1a7b40b09e7e00981c528420a64dd005637a5",
+      "bytes": 9162,
+      "sha256": "e78c9396e662881094ff5798afe44fc8dced0beb1e351e0fe120224b02f49279",
       "mode": "100644"
     },
     {
@@ -83,8 +83,8 @@
     },
     {
       "path": "catalog/companion/SKILL.md",
-      "bytes": 5551,
-      "sha256": "193e60a13397d88186f055849f0dc0e024af363c8116ed52ed0a45251b4f86e7",
+      "bytes": 5474,
+      "sha256": "f6a4c6b005518ac28d138d0e584f47292bd0079dc4f40def652797ec860171aa",
       "mode": "100644"
     },
     {
@@ -94,15 +94,9 @@
       "mode": "100644"
     },
     {
-      "path": "catalog/orchestrator/SKILL.md",
-      "bytes": 4509,
-      "sha256": "37e8c4e06e1e4f1a3b9c083a34d56585fdf25a95381ddf8a90694308ece1c49e",
-      "mode": "100644"
-    },
-    {
       "path": "catalog/settings/SKILL.md",
-      "bytes": 7447,
-      "sha256": "bee01a85b9f143825d5f2913478d99c15c8a018940ef336e5a45fce1588beaee",
+      "bytes": 7349,
+      "sha256": "0a59642967afa3c14f6f4c4bd8597a23c3c716af78a389a90a218041307933b2",
       "mode": "100644"
     },
     {
@@ -113,26 +107,26 @@
     },
     {
       "path": "config.json",
-      "bytes": 159,
-      "sha256": "394aa4f5b14d6d52972263dfd9e59489a6d21d7a8539db27f937451cef118ede",
+      "bytes": 133,
+      "sha256": "3703ca3e77728a264d78496461f8525f3b4f00e82fff62c8f9b967152c715fb4",
       "mode": "100644"
     },
     {
       "path": "lib/build.mjs",
-      "bytes": 11200,
-      "sha256": "1d26df5ed0a929b892db0bd7d38a9f2e2fa9f90ba5bf18ee0f97e2f6808adfcf",
+      "bytes": 11151,
+      "sha256": "04846ab89fb1531926c5c90599782b06109f27b1fb2d46cb1dc090864f3cf5a5",
       "mode": "100644"
     },
     {
       "path": "lib/config.mjs",
-      "bytes": 3311,
-      "sha256": "a93f2bb767298647fafcacda817b1f95f62d1ead7a658cbd3ddd5405e778dd3f",
+      "bytes": 3570,
+      "sha256": "71f42c1eced196d3c8008c8c52713d250ed48f86d705a9b40066bfe29c489e2e",
       "mode": "100644"
     },
     {
       "path": "lib/distribution.mjs",
-      "bytes": 32035,
-      "sha256": "9aa9bdc9b917b70eb8dc18db139e345733ec3aec324f25fc90db4cb9f4e4af30",
+      "bytes": 31927,
+      "sha256": "dc25cbb8b91c4a88a42c52f527e70becc079df4dd5fa0d849d8c3d27fea28680",
       "mode": "100644"
     },
     {
@@ -161,8 +155,8 @@
     },
     {
       "path": "lib/runtime.mjs",
-      "bytes": 20463,
-      "sha256": "c4bccde964918589f07d5ce25e17ddce791783534d3ce36e6bf89f9cf7c9aa2f",
+      "bytes": 17548,
+      "sha256": "70d9e31ec12478db4ccbce015ccd2a42973db950ad89086e3f745036d1b595b2",
       "mode": "100644"
     },
     {
@@ -173,8 +167,8 @@
     },
     {
       "path": "listing.json",
-      "bytes": 2563,
-      "sha256": "c17d62593f52ec6c7c1b0ca6e2444e0475eeda6ea43d61e504d3ee7a7e229ef9",
+      "bytes": 2547,
+      "sha256": "2ff730a415f605cf2844aa2fb55fa605bb4cb276b8f0537d904648c5310f2ebc",
       "mode": "100644"
     },
     {
@@ -185,8 +179,8 @@
     },
     {
       "path": "plugin.json",
-      "bytes": 7018,
-      "sha256": "874d5792cc7ca5db07937d8c2b2c44094816bd9203c8c66b36deeedc99c82762",
+      "bytes": 6973,
+      "sha256": "7ac3e6020f957e0e5e91fe7c29b038a641d9fad89d9a4c562bdb5745a458d08d",
       "mode": "100644"
     },
     {
@@ -203,26 +197,20 @@
     },
     {
       "path": "scripts/snipara.mjs",
-      "bytes": 7628,
-      "sha256": "31d079dacea84e965baeb440692f91f983d50fa78eb46c76e4822abf714b1857",
+      "bytes": 7502,
+      "sha256": "192996982709ea100c8aa04f66b8ade5cb413e50323e882bf7a78375e48e55f3",
       "mode": "100644"
     },
     {
       "path": "skills/companion/SKILL.md",
-      "bytes": 5551,
-      "sha256": "193e60a13397d88186f055849f0dc0e024af363c8116ed52ed0a45251b4f86e7",
-      "mode": "100644"
-    },
-    {
-      "path": "skills/orchestrator/SKILL.md",
-      "bytes": 4509,
-      "sha256": "37e8c4e06e1e4f1a3b9c083a34d56585fdf25a95381ddf8a90694308ece1c49e",
+      "bytes": 5474,
+      "sha256": "f6a4c6b005518ac28d138d0e584f47292bd0079dc4f40def652797ec860171aa",
       "mode": "100644"
     },
     {
       "path": "skills/settings/SKILL.md",
-      "bytes": 7447,
-      "sha256": "bee01a85b9f143825d5f2913478d99c15c8a018940ef336e5a45fce1588beaee",
+      "bytes": 7349,
+      "sha256": "0a59642967afa3c14f6f4c4bd8597a23c3c716af78a389a90a218041307933b2",
       "mode": "100644"
     },
     {
@@ -284,11 +272,11 @@
   ],
   "archives": {
     "native": {
-      "archiveSha256": "acbef9d16423a86c1f44f12c290b796304bcd370a8306b19faa3ef2453422f1b",
-      "archiveBytes": 116140
+      "archiveSha256": "fc6fb1e8d39e0784defe8d1c9a237c024ff4d8a3627ef6b56f412b82f6ee25c5",
+      "archiveBytes": 110991
     },
     "claude-directory": {
-      "archiveSha256": "d8b142c0a1a33471740e2d77737eec7c935c8d81cb29597da205ae5937d80fbd",
+      "archiveSha256": "b4e2538899221381451ee243b273f8f765fb834a12b584c156949cd3be14b864",
       "archiveBytes": 32427
     }
   },

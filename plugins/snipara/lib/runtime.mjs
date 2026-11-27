@@ -8,10 +8,10 @@ import { observeSource, readSourceBinding, SourceBindingError } from "./source-b
 export function setupLocalWork(config, pluginRoot, client, {
   cwd = process.cwd(), env = process.env, execute = spawnSync,
 } = {}) {
-  for (const name of ["companion", "orchestrator"]) requireModule(config, name);
+  requireModule(config, "companion");
   if (!["codex", "claude"].includes(client)) throw new Error("Choose --client codex or claude.");
   const result = execute(process.platform === "win32" ? "npx.cmd" : "npx", [
-    "--yes", "create-snipara@2.2.0", "init", "--profile", "local-work",
+    "--yes", "create-snipara@3.1.4", "init", "--profile", "local-work",
     "--client", client === "claude" ? "claude-code" : "codex",
   ], { cwd, env: runtimeEnvironment(env), stdio: "inherit", shell: false, timeout: 600000 });
   if (result.error || result.status !== 0)
@@ -104,7 +104,6 @@ function checkRuntimeSourceArguments(name, args, cwd, binding) {
       if (name === "companion" && lstatSync(path).isDirectory()) checkCompanionLocalProject(path, binding);
     }
   }
-  if (name === "orchestrator") return sourceRoot;
   if (args.some((value) => /^-d(?:.|$)/.test(value)) && !["impact", "sync-documents"].includes(args[0]) && !(args[0] === "code" && args[1] === "impact")) {
     // -d is depth for impact, directory elsewhere. Require its unambiguous spelling.
     scopeError("Use --dir for a bound runtime directory override.");
@@ -175,29 +174,6 @@ function checkCompanionLocalProject(sourceRoot, binding) {
   }
 }
 
-function checkOrchestratorLocalProject(cwd, sourceRoot, binding) {
-  // Pinned 1.13.1 find_config_path() uses this exact cwd-only precedence and
-  // get_config() returns its JSON immediately, before considering environment.
-  for (const filename of [".agentic.json", ".snipara-orchestrator.json"]) {
-    const path = join(cwd, filename);
-    if (!existsSync(path)) continue;
-    checkSourcePath(cwd, binding, sourceRoot, path);
-    if (!lstatSync(path).isFile() || lstatSync(path).size > 65536)
-      scopeError("The local Orchestrator configuration cannot be verified.");
-    let data;
-    try { data = JSON.parse(readFileSync(path, "utf8")); }
-    catch { scopeError("The local Orchestrator configuration cannot be verified."); }
-    if (!data || typeof data !== "object" || Array.isArray(data)
-        || ![binding.projectId, binding.projectSlug].includes(data.snipara_project))
-      scopeError("The local Orchestrator configuration selects a different project. Reconnect this repository.");
-    if (typeof data.repo_path !== "string" || !data.repo_path)
-      scopeError("The local Orchestrator repository path cannot be verified.");
-    const repository = checkSourcePath(cwd, binding, sourceRoot, data.repo_path);
-    if (!lstatSync(repository).isDirectory()) scopeError("Choose a repository folder for Orchestrator.");
-    return;
-  }
-}
-
 // Do not hand unrelated provider keys, package tokens or loader-injection flags
 // to an optional runtime or package installer. Native MCP OAuth stays in the host.
 export function runtimeEnvironment(env, shareSniparaCredentials = false, shareNativeNetwork = false) {
@@ -247,22 +223,14 @@ export function invocation(
     shareSniparaCredentials = false, shareNativeNetwork = false } = {}
 ) {
   requireModule(config, name); // Must run before probing binaries or spawning any process.
-  if (
-    !["companion", "orchestrator"].includes(name) ||
-    !Array.isArray(args) ||
-    args.some((arg) => typeof arg !== "string")
-  ) {
-    throw new Error("Expected companion or orchestrator and a CLI argument array.");
+  if (name !== "companion" || !Array.isArray(args) || args.some((arg) => typeof arg !== "string")) {
+    throw new Error("Expected companion and a CLI argument array.");
   }
   const help = args.length === 1 && ["--help", "-h", "--version"].includes(args[0]);
   const localStatus =
-      name === "companion"
-        ? args[0] === "workflow" &&
-          args[1] === "status" &&
-          args.slice(2).every((arg) => arg === "--json")
-        : args[0] === "status" && args.slice(1).every((arg) => arg === "--json");
+    args[0] === "workflow" && args[1] === "status" && args.slice(2).every((arg) => arg === "--json");
   if (config.connection === "source" && !help && !localStatus)
-    throw new Error("The repository MCP connection does not authenticate Companion or Orchestrator. Use an explicitly configured separate runtime profile; this source profile permits local status/help only.");
+    throw new Error("The repository MCP connection does not authenticate Companion. Use an explicitly configured separate runtime profile; this source profile permits local status/help only.");
   if (!config.modules.snipara || (!config.project && config.connection !== "source")) {
     if (!help && !localStatus)
       throw new Error(
@@ -284,12 +252,9 @@ export function invocation(
       throw new SourceBindingError("project_mismatch", "This runtime profile belongs to a different Snipara project. Connect this repository before continuing.");
     if (sourceBinding) {
       sourceRoot = checkRuntimeSourceArguments(name, args, cwd, sourceBinding);
-      if (name === "companion") checkCompanionLocalProject(sourceRoot, sourceBinding);
-      else checkOrchestratorLocalProject(cwd, sourceRoot, sourceBinding);
+      checkCompanionLocalProject(sourceRoot, sourceBinding);
     }
   }
-  if (shareNativeNetwork && name !== "companion")
-    throw new Error("Native network forwarding currently supports Companion only.");
   const runtimeEnv = {
     ...runtimeEnvironment(env, shareSniparaCredentials, shareNativeNetwork),
     SNIPARA_COMPANION_SKIP_NPM_VERSION_CHECK: "1",
@@ -300,29 +265,11 @@ export function invocation(
     runtimeEnv.SNIPARA_PROJECT_ID = sourceBinding?.projectId ?? config.project;
     runtimeEnv.SNIPARA_API_URL = "https://api.snipara.com";
   }
-  if (sourceRoot) {
-    runtimeEnv.SNIPARA_WORKSPACE_DIR = sourceRoot;
-    // Without cwd JSON, 1.13.1 may find Companion credentials in an ancestor.
-    // Its REPO_PATH environment override prevents that fallback moving execution
-    // outside the verified source. Local JSON was independently checked above.
-    if (name === "orchestrator") runtimeEnv.REPO_PATH = sourceRoot;
-  }
+  if (sourceRoot) runtimeEnv.SNIPARA_WORKSPACE_DIR = sourceRoot;
   const data = runtimeDirectory(env, cwd);
-  const local =
-    name === "companion"
-      ? join(data, "companion", "node_modules", "snipara-companion", "dist", "index.js")
-      : join(
-          data,
-          "orchestrator",
-          process.platform === "win32" ? "Scripts" : "bin",
-          process.platform === "win32" ? "snipara-orchestrator.exe" : "snipara-orchestrator"
-        );
-  const command = existsSync(local)
-    ? name === "companion"
-      ? process.execPath
-      : local
-    : `snipara-${name}`;
-  const prefix = existsSync(local) && name === "companion" ? [local] : [];
+  const local = join(data, "companion", "node_modules", "snipara-companion", "dist", "index.js");
+  const command = existsSync(local) ? process.execPath : "snipara-companion";
+  const prefix = existsSync(local) ? [local] : [];
   const result = probe(command, [...prefix, "--version"], {
     encoding: "utf8",
     shell: false,
@@ -348,8 +295,7 @@ export function installRuntime(
   { env = process.env, cwd = process.cwd(), execute = spawnSync } = {}
 ) {
   requireModule(config, name);
-  if (!["companion", "orchestrator"].includes(name))
-    throw new Error("Only Companion and Orchestrator have local runtimes.");
+  if (name !== "companion") throw new Error("Only Companion has a local runtime.");
   const data = runtimeDirectory(env, cwd);
   const target = join(data, name);
   mkdirSync(target, { recursive: true });
@@ -359,19 +305,13 @@ export function installRuntime(
     });
     if (result.error || result.status !== 0) throw new Error(`${name} installation failed.`);
   };
-  if (name === "companion") {
-    run(process.platform === "win32" ? "npm.cmd" : "npm", [
-      "install",
-      "--prefix",
-      target,
-      "--ignore-scripts",
-      "--no-audit",
-      "--no-fund",
-      `snipara-companion@${VERSIONS.companion}`,
-    ]);
-  } else {
-    run(process.platform === "win32" ? "python" : "python3", ["-m", "venv", target]);
-    const python = join(target, process.platform === "win32" ? "Scripts/python.exe" : "bin/python");
-    run(python, ["-m", "pip", "install", `snipara-orchestrator==${VERSIONS.orchestrator}`]);
-  }
+  run(process.platform === "win32" ? "npm.cmd" : "npm", [
+    "install",
+    "--prefix",
+    target,
+    "--ignore-scripts",
+    "--no-audit",
+    "--no-fund",
+    `snipara-companion@${VERSIONS.companion}`,
+  ]);
 }

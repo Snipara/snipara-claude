@@ -203,7 +203,7 @@ export function buildPlugin(
     mkdirSync(join(root, "skills"));
     for (const name of [
       "settings",
-      ...["snipara", "companion", "orchestrator"].filter((name) => config.modules[name]),
+      ...["snipara", "companion"].filter((name) => config.modules[name]),
     ]) {
       cpSync(join(root, "catalog", name), join(root, "skills", name), { recursive: true });
     }
@@ -233,7 +233,7 @@ export function buildPlugin(
       owner: { name: manifest.author.name },
       metadata: {
         description:
-          "Snipara project context, Companion workflows and optional Orchestrator execution.",
+          "Snipara project context and Companion workflows.",
       },
       plugins: [
         {

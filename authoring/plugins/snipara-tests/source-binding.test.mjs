@@ -14,7 +14,7 @@ import { applyOptions, validateConfig, VERSIONS } from "../snipara/lib/config.mj
 
 const project = { workspaceId: "team_one", projectId: "project_a", projectSlug: "repo-a" };
 const pluginRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../snipara");
-const runtimeConfig = { schemaVersion: 1, project: project.projectSlug, connection: "project", modules: { snipara: true, companion: true, orchestrator: true } };
+const runtimeConfig = { schemaVersion: 1, project: project.projectSlug, connection: "project", modules: { snipara: true, companion: true } };
 function fixture(t) {
   const root = mkdtempSync(join(tmpdir(), "snipara-source-binding-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
@@ -309,7 +309,7 @@ test("project, tenant and workspace overrides cannot bypass the source binding",
   const a = repository(root, "a", "https://github.com/team/a.git");
   const b = repository(root, "b", "https://github.com/team/b.git");
   writeSourceBinding(a, project);
-  for (const name of ["companion", "orchestrator"]) {
+  for (const name of ["companion"]) {
     const probe = () => assert.fail("runtime must not be probed");
     for (const tail of [
       ["--project", "other"], ["--project=other"],
@@ -330,46 +330,4 @@ test("stale Companion local project metadata and post-launch retargeting are ref
   rmSync(join(root, ".snipara/companion/config.json"));
   for (const args of [["login"], ["init", "--project", project.projectSlug], ["source", "watch", root, "--apply"]])
     assert.throws(() => invocation({ ...runtimeConfig, sourceBound: true }, "companion", args, { cwd: root, probe }), code("source_argument_mismatch"));
-});
-
-test("Orchestrator cwd JSON cannot override bound project or execution repository", (t) => {
-  const root = fixture(t);
-  const a = repository(root, "a", "https://github.com/team/a.git");
-  const b = repository(root, "b", "https://github.com/team/b.git");
-  writeSourceBinding(a, project);
-  const valid = { snipara_api_key: "do-not-echo-this", snipara_project: project.projectSlug, repo_path: a, prod_url: "https://example.invalid" };
-  const probe = () => assert.fail("runtime must not be probed");
-  for (const filename of [".agentic.json", ".snipara-orchestrator.json"]) {
-    for (const invalid of [
-      { ...valid, snipara_project: "other" },
-      { ...valid, repo_path: b },
-      { ...valid, repo_path: "../b" },
-      { ...valid, repo_path: undefined },
-    ]) {
-      writeFileSync(join(a, filename), JSON.stringify(invalid));
-      assert.throws(() => invocation({ ...runtimeConfig, sourceBound: true }, "orchestrator", ["run"], { cwd: a, probe }), (error) => code("source_argument_mismatch")(error) && !error.message.includes("do-not-echo-this"));
-    }
-    rmSync(join(a, filename));
-  }
-});
-
-test("Orchestrator honors qualified cwd config precedence and pins no-config fallback", (t) => {
-  const root = fixture(t);
-  const a = repository(root, "a", "https://github.com/team/a.git");
-  const docs = join(a, "docs"); mkdirSync(docs);
-  writeSourceBinding(a, project);
-  const probe = () => ({ status: 0, stdout: VERSIONS.orchestrator });
-  const launch = (cwd = a) => invocation({ ...runtimeConfig, sourceBound: true }, "orchestrator", ["run"], { cwd, probe, env: { REPO_PATH: "/wrong-inherited-root" } });
-  const noConfig = launch();
-  assert.equal(noConfig.options.env.REPO_PATH, observeSource(a).root);
-  // JSON lookup is cwd-only; an ancestor Companion file must not choose repo_path.
-  mkdirSync(join(root, ".snipara/companion"), { recursive: true });
-  writeFileSync(join(root, ".snipara/companion/config.json"), JSON.stringify({ projectId: "other", apiKey: "never-print" }));
-  assert.equal(launch(docs).options.env.REPO_PATH, observeSource(a).root);
-  const valid = { snipara_api_key: "test-key", snipara_project: project.projectSlug, repo_path: "docs", prod_url: "https://example.invalid" };
-  writeFileSync(join(a, ".agentic.json"), JSON.stringify(valid));
-  writeFileSync(join(a, ".snipara-orchestrator.json"), JSON.stringify({ ...valid, snipara_project: "ignored-second-project" }));
-  assert.equal(launch().options.env.SNIPARA_PROJECT_SLUG, project.projectSlug);
-  rmSync(join(a, ".agentic.json"));
-  assert.throws(() => launch(), code("source_argument_mismatch"));
 });

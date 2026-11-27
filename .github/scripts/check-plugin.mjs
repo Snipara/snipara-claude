@@ -43,7 +43,7 @@ function checkInventory(root, expected) {
 }
 const nativeRoot = "plugins/snipara", directoryRoot = "plugins/snipara-directory";
 checkInventory(nativeRoot, bindings.native);
-assert.equal(bindings.native.length, 37);
+assert.equal(bindings.native.length, 35);
 for (const name of ["plugin.json", ".claude-plugin/plugin.json", ".codex-plugin/plugin.json"]) {
   const manifest = read(join(nativeRoot, name));
   assert.equal(manifest.name, "snipara");
@@ -84,4 +84,4 @@ for (const name of allowed.filter(name => name !== "assets/icon.png")) {
   assert.ok(body.length <= 256 * 1024 && !body.includes(0));
   assert.ok(!new TextDecoder("utf-8", { fatal: true }).decode(body).startsWith("#!"));
 }
-console.log("Exact native37 and isolated Claude Directory8 payloads, marketplace identities, source routing, icons and legal files pass.");
+console.log("Exact native35 and isolated Claude Directory8 payloads, marketplace identities, source routing, icons and legal files pass.");

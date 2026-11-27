@@ -32,8 +32,8 @@ Code documents project reload from 2.1.246; older versions require a fresh sessi
 Pinned Codex source supports the regular-stdio design, but current installed-app
 acceptance remains unperformed. Global hosted memory connections are independent.
 
-Companion/Orchestrator skills are included and independently disableable. Their
-programs and credentials remain separate. The source profile permits local
+The Companion skill is included and can be disabled. Its program and
+credentials remain separate. The source profile permits local
 status/help only; hosted/execution work needs an explicit project runtime profile
 and authentication. No install or task runs at session start.
 

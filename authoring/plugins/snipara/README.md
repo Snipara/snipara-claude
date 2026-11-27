@@ -78,7 +78,7 @@ connection, local work stays local. An existing authorized repository connection
 is reused for supported cloud operations; preparation preserves it and unrelated
 connections. Reload the trusted project afterwards.
 
-Use `npx --yes snipara-companion@5.1.7 task --help` for the task journey,
+Use `npx --yes snipara-companion@9.3.0 task --help` for the task journey,
 `doctor` for a lightweight diagnostic and `validation --help` for checks.
 The local MCP connection uses the same selected toolchain. Task state and proof
 stay bound to their repository/worktree; a saved running marker is not a live
@@ -91,24 +91,27 @@ they do not trigger execution on the host. Hosted context and provider operation
 retain their own authorization. Preparation is not a passing test or activation:
 verify any cloud connection and a cited project answer separately when connected.
 Automatic cloud job synchronization is a separate planned capability; local
-execution must keep working while disconnected. Standalone Companion,
-Orchestrator and Sandbox remain available independently of this managed bundle.
+execution must keep working while disconnected. Standalone Companion
+and Sandbox remain available independently of this managed bundle.
 
 ## Advanced standalone workflow modules
 
-All three skill modules are on by default and can be switched independently:
+Both skill modules are on by default and can be switched independently:
 
-| Module       | Purpose                                | Disabled behavior                                    |
-| ------------ | -------------------------------------- | ---------------------------------------------------- |
-| Snipara      | Project context and reviewed memory    | Context skill and this plugin's registration removed |
-| Companion    | Plans, checkpoints and resume          | Skill, installer and launcher disabled               |
-| Orchestrator | Explicit coordination and review gates | Skill, installer and launcher disabled               |
+| Module    | Purpose                             | Disabled behavior                                    |
+| --------- | ----------------------------------- | ---------------------------------------------------- |
+| Snipara   | Project context and reviewed memory | Context skill and this plugin's registration removed |
+| Companion | Plans, checkpoints and resume       | Skill, installer and launcher disabled               |
+
+Orchestrator is retired: its skill, installer, launcher and switch are gone. A
+profile that still carries `"orchestrator"` in `modules` is read and the switch
+is dropped.
 
 Changing these switches does not stop running tasks or disable independently
 configured project/global servers. Disable a regular project server separately
 when removing repository access. Refresh/restart after profile changes.
 
-Companion 5.1.7 and Orchestrator 2.0.0 remain separately available programs.
+Companion 9.3.0 remains a separately available program.
 No dependency installs or tasks run at session start. The source profile permits
 only their local status/help commands: its browser MCP grant does not authorize
 existing runtime credentials. Hosted/execution work requires a separate explicit

@@ -32,13 +32,13 @@ installed plugin's `scripts/snipara.mjs setup-work --client codex` (use
 `--client claude` for Claude Code). It delegates to the pinned installer:
 
 ```sh
-npx --yes create-snipara@2.2.2 init --profile local-work --client codex
+npx --yes create-snipara@3.1.4 init --profile local-work --client codex
 ```
 
 The compatible local tools are prepared together. Signup, a Hosted project and
 provider keys are not prerequisites. Existing authorized repository connections
 and unrelated client settings are preserved. Reload the trusted project after
-setup. Standalone Companion 4.2.0, Orchestrator 1.16.0 and Sandbox 3.0.0 remain
+setup. Standalone Companion and Sandbox remain
 independent integrations.
 
 Preparation does not install Docker or dependency images, start a test, call a
@@ -72,7 +72,7 @@ context connection does not grant remote launch or cancellation authority.
 
 | Path | Purpose |
 | --- | --- |
-| `plugins/snipara` | Native `2.3.0-profile.abbfc4f7683c`; exactly 37 files, no lifecycle hooks |
+| `plugins/snipara` | Native `2.3.0-profile.3e41e11ad061`; exactly 35 files, no lifecycle hooks |
 | `plugins/snipara-directory` | Claude Directory 2.2.4; exactly eight files, remote context/OAuth only |
 | `authoring/plugins` | Authoring source and regression tests; never a Directory scan root |
 
